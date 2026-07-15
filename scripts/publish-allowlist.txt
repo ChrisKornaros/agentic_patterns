@@ -1,0 +1,3 @@
+# Paths exported from the source repo, one per line, repo-relative.
+# Comments (#) and blank lines are ignored. This file is committed —
+# the set of published paths is public by definition.
