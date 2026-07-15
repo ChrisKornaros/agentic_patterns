@@ -105,7 +105,12 @@ for root, _, files in os.walk(staging):
                and os.path.exists(resolved):
                 return m.group(0)
             stripped += 1
-            return label  # link points outside the export: keep text, drop link
+            # Link points outside the export: keep text, drop link. If the
+            # label is itself a path, collapse it to a backticked basename
+            # so no private-repo path ships as prose.
+            if label.strip().startswith(('./', '../')) or label.strip() == target:
+                return '`{}`'.format(os.path.splitext(os.path.basename(rel or target))[0])
+            return label
 
         new = link_re.sub(fix, text)
         if new != text:
