@@ -108,5 +108,5 @@ uncommitted change on a freshly-synced `main`. See the
 [session-handoff module](../modules/session-handoff/index.md) (v2).
 
 Cross-refs:
-- playbook/02-workflow-patterns.md §Updated/1–4
-- playbook/07-anti-patterns.md #12
+- `02-workflow-patterns` §`Updated/1`–4
+- `07-anti-patterns` #12

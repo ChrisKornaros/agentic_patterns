@@ -9,10 +9,10 @@ dependencies:
   - ask-merged-via-popup
   - smoke-before-commit
 evidence:
-  - case-studies/product-use-tracker/playbook.md#141-workflow-rules-codified-mid-cycle
-  - templates/_shared/git-workflow.md#the-session-end-loop
-  - playbook/02-workflow-patterns.md#1-auto-commit--auto-pr-at-end-of-branch-session
-  - playbook/02-workflow-patterns.md#3-askuserquestion-answer--merge-confirmation-not-a-request-to-wait
+  - playbook.md#141-workflow-rules-codified-mid-cycle
+  - git-workflow.md#the-session-end-loop
+  - 02-workflow-patterns.md#1-auto-commit--auto-pr-at-end-of-branch-session
+  - 02-workflow-patterns.md#3-askuserquestion-answer--merge-confirmation-not-a-request-to-wait
 applies_when:
   - host follows GitHub Flow (sessions = one branch = one PR)
   - human is available to merge during the session

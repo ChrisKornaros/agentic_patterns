@@ -14,7 +14,7 @@ that any host repo can vendor into its `CLAUDE.md` (or per-role
 > and `no-sudo-as-shortcut` (with what authority), and the
 > file-access guardrail family adds `no-cat-head-via-bash`
 > (bundled with H2 per
-> `README`),
+> `h2-re-read-collapse/README`),
 > and the day-to-day git-flow family
 > (`08-pre-content-manager-optimization`
 > track A1) adds the four guardrails/workflows a fresh repo composes
@@ -36,7 +36,7 @@ that any host repo can vendor into its `CLAUDE.md` (or per-role
 > `module:` to auto-pair on) plus the `docs-two-layer` and
 > `status-emoji-discipline` doc/tracking guardrails.
 > The full backlog and migration plan live in
-> ../roadmap/03-instruction-modules.md §5.
+> `03-instruction-modules` §5.
 
 ## What lives here
 
@@ -52,8 +52,8 @@ that any host repo can vendor into its `CLAUDE.md` (or per-role
 
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
-| git-flow-no-direct-main | guardrail | `git-workflow`, agents/_shared/common-guardrails.md §Never | 🟢 stable |
-| [git-flow-session-end](git-flow-session-end/index.md) | workflow | templates/_shared/git-workflow.md §The session-end loop | 🟢 stable · ships an optional `Stop`-hook enforcer (`session_end_guard.py` + `settings-snippet.json`) |
+| git-flow-no-direct-main | guardrail | `git-workflow`, `common-guardrails` §Never | 🟢 stable |
+| [git-flow-session-end](git-flow-session-end/index.md) | workflow | `git-workflow` §The session-end loop | 🟢 stable · ships an optional `Stop`-hook enforcer (`session_end_guard.py` + `settings-snippet.json`) |
 | [phase-kickoff](phase-kickoff/index.md) | prompt | [prompts/phase-kickoff.md](../prompts/phase-kickoff.md) | 🟢 stable |
 
 ### Tech-stack defaults
@@ -65,8 +65,8 @@ agent runtime instead of relearned every project.
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
 | python-uv-only | guardrail | `ops`, `playbook` | 🟢 stable |
-| duckdb-default-store | guardrail | tools-stack/storage.md §Default: DuckDB | 🟢 stable |
-| arm64-target-arch | gotcha | `ops`, `README` | 🟢 stable |
+| duckdb-default-store | guardrail | `storage` §Default: DuckDB | 🟢 stable |
+| arm64-target-arch | gotcha | `ops`, `tools-stack/README` | 🟢 stable |
 
 ### Scope-of-action
 
@@ -79,19 +79,19 @@ host in a state nobody reviewed.
 
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
-| stay-in-project-tree | guardrail | agents/_shared/common-guardrails.md §Never ("Reach outside the repo's working tree"), `settings` deny-list | 🟢 stable |
-| no-sudo-as-shortcut | guardrail | agents/_shared/common-guardrails.md §Never ("Reach for `sudo` as a shortcut"), playbook/07-anti-patterns.md #13, `settings` deny-list | 🟢 stable |
+| stay-in-project-tree | guardrail | `common-guardrails` §Never ("Reach outside the repo's working tree"), `settings` deny-list | 🟢 stable |
+| no-sudo-as-shortcut | guardrail | `common-guardrails` §Never ("Reach for `sudo` as a shortcut"), `07-anti-patterns` #13, `settings` deny-list | 🟢 stable |
 
 ### File-access surface
 
 The companion family that the H2 re-read-collapse experiment
-(per `README`)
+(per `h2-re-read-collapse/README`)
 exercises from two angles: a runtime hook on the `Read` tool plus a
 prose guardrail closing the Bash-cat workaround the hook can't see.
 
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
-| no-cat-head-via-bash | guardrail | `README` baseline (~25% of Bash spend), root CLAUDE.md "Avoid using this tool to run `cat`/`head`/..." guidance | 🟡 experimental |
+| no-cat-head-via-bash | guardrail | `2026-05-27-pre-obsidian/README` baseline (~25% of Bash spend), root CLAUDE.md "Avoid using this tool to run `cat`/`head`/..." guidance | 🟡 experimental |
 
 ### Day-to-day git-flow
 
@@ -109,11 +109,11 @@ next-session kickoff).
 
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
-| git-flow-branch-naming | guardrail | templates/_shared/git-workflow.md §Branch naming | 🟢 stable |
+| git-flow-branch-naming | guardrail | `git-workflow` §Branch naming | 🟢 stable |
 | smoke-before-commit | guardrail | `04-testing-verification` | 🟢 stable |
-| auto-commit-on-branch-done | workflow | agents/_shared/common-guardrails.md §Always | 🟢 stable |
-| ask-merged-via-popup | workflow | agents/_shared/common-guardrails.md §Always, templates/_shared/git-workflow.md §The session-end loop | 🟢 stable |
-| [session-handoff](session-handoff/index.md) | workflow | playbook/README.md §Quick-reference card (#8, #10), [prompts/phase-kickoff.md](../prompts/phase-kickoff.md), `lessons-log` | 🟢 stable · runs *after* `git-flow-session-end`: cross-project lesson capture into `knowledge` + roadmap-grounded `.claude/next-session.md` |
+| auto-commit-on-branch-done | workflow | `common-guardrails` §Always | 🟢 stable |
+| ask-merged-via-popup | workflow | `common-guardrails` §Always, `git-workflow` §The session-end loop | 🟢 stable |
+| [session-handoff](session-handoff/index.md) | workflow | `playbook/README` §Quick-reference card (#8, #10), [prompts/phase-kickoff.md](../prompts/phase-kickoff.md), `lessons-log` | 🟢 stable · runs *after* `git-flow-session-end`: cross-project lesson capture into `knowledge` + roadmap-grounded `.claude/next-session.md` |
 
 ### Project-integration
 
@@ -129,10 +129,10 @@ existing one ahead of a published case study.
 
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
-| secrets-no-plaintext | guardrail | agents/_shared/common-guardrails.md §Never, tools-stack/ops.md §Secrets | 🟢 stable |
-| external-api-adapter-boundary | guardrail | playbook/03-design-patterns.md §The seven patterns, tools-stack/web.md §Patterns to keep | 🟡 experimental |
-| no-live-external-in-tests | guardrail | playbook/04-testing-verification.md §Live DB never mutated, agents/_shared/common-guardrails.md §Never | 🟢 stable |
-| adr-per-major-decision | workflow | playbook/03-design-patterns.md §The seven patterns, `REQUIREMENTS_AI.template` | 🟡 experimental |
+| secrets-no-plaintext | guardrail | `common-guardrails` §Never, `ops` §Secrets | 🟢 stable |
+| external-api-adapter-boundary | guardrail | `03-design-patterns` §The seven patterns, `web` §Patterns to keep | 🟡 experimental |
+| no-live-external-in-tests | guardrail | `04-testing-verification` §Live DB never mutated, `common-guardrails` §Never | 🟢 stable |
+| adr-per-major-decision | workflow | `03-design-patterns` §The seven patterns, `REQUIREMENTS_AI.template` | 🟡 experimental |
 
 `no-live-external-in-tests` supersedes the sketched `no-live-db-in-tests`
 scope — it covers any external system, the live DB included.
@@ -174,8 +174,8 @@ codify the doc/tracking conventions a fresh repo composes early.
 |---|---|---|---|
 | [substrate-preflight](substrate-preflight/index.md) | prompt | [../prompts/substrate-preflight.md](../prompts/substrate-preflight.md), [../skills/substrate-preflight/SKILL.md](../skills/substrate-preflight/SKILL.md) | 🟢 stable · skill auto-pairs via `module:` |
 | [tight-code-review](tight-code-review/index.md) | prompt | [../prompts/tight-code-review.md](../prompts/tight-code-review.md), [../skills/tight-review/SKILL.md](../skills/tight-review/SKILL.md) | 🟡 experimental · skill auto-pairs via `module:` |
-| docs-two-layer | guardrail | `01-documentation-stack`, ../case-studies/product-use-tracker/playbook.md §2 | 🟢 stable |
-| status-emoji-discipline | guardrail | ../playbook/02-workflow-patterns.md §4, ../case-studies/product-use-tracker/playbook.md §1.4.1 | 🟢 stable |
+| docs-two-layer | guardrail | `01-documentation-stack`, `playbook` §2 | 🟢 stable |
+| status-emoji-discipline | guardrail | `02-workflow-patterns` §4, `playbook` §1.4.1 | 🟢 stable |
 
 ### Pending extraction
 
@@ -184,13 +184,13 @@ across `agents` role definitions; they'll be extracted in
 follow-up branches as the multi-agent team firms up (the `po/` flesh-out
 in `10-fable-window-finalization` A2 is the
 next forcing case). See
-../roadmap/08-pre-content-manager-optimization.md §4-A1
+`08-pre-content-manager-optimization` §4-A1
 for the `content_manager`-relevant history.
 
 ## How a host repo uses a module
 
 The full composition rules live in
-../roadmap/03-instruction-modules.md §4;
+`03-instruction-modules` §4;
 the short version:
 
 1. **Vendor.** Copy the module directory into the host's
@@ -209,7 +209,7 @@ the short version:
 ## How a module earns its place
 
 Same bar as
-agents/_shared/common-guardrails.md §"How rules earn their place here",
+`common-guardrails` §"How rules earn their place here",
 adapted for portability:
 
 1. **Cross-project.** The rule has to plausibly apply to more
@@ -241,7 +241,7 @@ on any violation — run it alongside `check_links.sh`.
 ## Cross-references
 
 - Spec: `03-instruction-modules`
-- Structural rationale: ../roadmap/04-structural-proposal.md §3.2
+- Structural rationale: `04-structural-proposal` §3.2
 - Where the rules currently live (source for extraction):
   `common-guardrails`,
   `git-workflow`,

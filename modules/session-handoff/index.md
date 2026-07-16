@@ -8,7 +8,7 @@ dependencies:
 evidence:
   - playbook/README.md#quick-reference-card
   - prompts/phase-kickoff.md
-  - knowledge/lessons-log.md
+  - lessons-log.md
 applies_when:
   - host follows the git-flow-session-end loop
   - work spans multiple sessions and/or multiple projects
@@ -122,7 +122,7 @@ has moved on, trust the roadmap over this file.*
 injected verbatim into the next session's opening context (by the
 companion hook below), so every line spends always-loaded budget — the
 pre-cap norm was an ~11KB injection, a whole CLAUDE.md's worth of
-tokens (roadmap/12 §5 S2).
+tokens (`roadmap/12` §5 S2).
 The kickoff is a *pointer to* the next unit, not the plan itself: name
 the roadmap section and link it (`roadmap/NN §X`) instead of restating
 its steps, rationale, or history. A draft running past ~40 lines is
@@ -147,7 +147,7 @@ Reflect on the session and sort what's worth keeping:
 | What | Destination |
 |---|---|
 | Project state, a gotcha tied to *this* codebase, a preference about *this* repo | the **per-project** memory store (`~/.claude/projects/<key>/memory/`) — propose before saving |
-| A transferable workflow, a recurring failure mode, a "we work better when…" lesson | append to `knowledge/lessons-log.md` in the inbox format (`CLAUDE`) |
+| A transferable workflow, a recurring failure mode, a "we work better when…" lesson | append to ``lessons-log`` in the inbox format (`CLAUDE`) |
 | A portable guardrail already crisp enough to be a rule | write it straight as a [module](../) |
 | Nothing meaningful | say so — "no handoff knowledge this session" — don't invent |
 
@@ -190,13 +190,13 @@ increasing order of agency:
 | [`session_handoff_kickoff.py`](session_handoff_kickoff.py) | The `SessionStart` hook — reads the payload on stdin and injects `.claude/next-session.md` via `hookSpecificOutput.additionalContext`. No-ops when the file is absent; fails open. |
 | [`settings-snippet.json`](settings-snippet.json) | Paste-ready `hooks.SessionStart` entry that runs the hook, guarded with `[ -f ] || exit 0` so it's a safe no-op until the module is vendored. Merge into the host's `.claude/settings.json` (VENDORING.md §6). |
 
-Vendoring this module via `scripts/install-modules.sh`
+Vendoring this module via ``install-modules``
 `cp -R`s both files in and the run notice points back here to wire the
 hook — and the Mode-B example settings
 (`claude-settings.example.json`)
 already pre-wires the `SessionStart` block, so `/bootstrap-repo` auto-wires
 it. On Chris's own machines the hook is wired **user-globally** in
-`dotfiles/.claude/settings.json`
+``settings``
 (promoted there 2026-06-04 after repo-scoped dogfooding), so it fires in
 every repo with this module vendored.
 

@@ -33,5 +33,5 @@ your session.
 ## Source
 
 These are condensed from the master case study at
-case-studies/product-use-tracker/playbook.md §9.
+`playbook` §9.
 That file has the longer rationale.

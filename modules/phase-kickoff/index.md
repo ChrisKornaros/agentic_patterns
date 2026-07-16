@@ -6,8 +6,8 @@ lifecycle: stable
 dependencies: []
 evidence:
   - prompts/phase-kickoff.md
-  - case-studies/product-use-tracker/playbook.md#141-workflow-rules-codified-mid-cycle
-  - playbook/02-workflow-patterns.md#1-auto-commit--auto-pr-at-end-of-branch-session
+  - playbook.md#141-workflow-rules-codified-mid-cycle
+  - 02-workflow-patterns.md#1-auto-commit--auto-pr-at-end-of-branch-session
 applies_when:
   - host has a roadmap or requirements doc with phase sections
   - session is implementing a phase, not exploring or debugging
