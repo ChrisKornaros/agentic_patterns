@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # One-way export from the private research repo into this public mirror.
 #
-# Pipeline: refresh mirror -> rsync allowlist into staging -> deny-grep
-# gate -> link sanitization + resolution check -> copy into working
-# tree -> one commit: "sync from source @ <short-sha>".
+# Pipeline: refresh mirror -> rsync allowlist into staging -> link
+# sanitization + resolution check -> deny-grep gate (on the sanitized
+# tree, i.e. what ships) -> copy into working tree -> one commit:
+# "sync from source @ <short-sha>".
 #
 # Requires a local, gitignored .publish-denylist at the repo root
 # (grep -E patterns, one per line; blank lines and # comments ignored).
@@ -59,21 +60,7 @@ for p in "${allowed_paths[@]}"; do
   rsync -a --exclude '.git' "$CACHE/$p" "$staging/$(dirname "$p")/"
 done
 
-# --- 3. Deny-grep gate ---
-have_patterns=0
-while IFS= read -r pat; do
-  [ -n "$pat" ] && [ "${pat:0:1}" != "#" ] || continue
-  have_patterns=1
-  if hits="$(grep -rEl -- "$pat" "$staging" 2>/dev/null)"; then
-    echo "publish: deny pattern matched in export:" >&2
-    echo "$hits" | sed "s|^$staging/|  |" >&2
-    die "deny-grep gate failed (pattern not echoed — it is private)."
-  fi
-done < "$DENYLIST"
-[ "$have_patterns" -eq 1 ] || die ".publish-denylist contains no patterns — refusing to publish unguarded."
-echo "publish: deny-grep gate passed"
-
-# --- 4. Link sanitization + resolution check ---
+# --- 3. Link sanitization + resolution check ---
 python3 - "$staging" <<'PYEOF'
 import os, re, sys
 
@@ -110,7 +97,8 @@ for root, _, files in os.walk(staging):
             # so no private-repo path ships as prose.
             l = label.strip()
             if l == target or ('/' in l and re.fullmatch(r'[\w./#-]+', l)):
-                return '`{}`'.format(os.path.splitext(os.path.basename(rel or target))[0])
+                base = os.path.basename((rel or target).rstrip('/'))
+                return '`{}`'.format(os.path.splitext(base)[0] or 'link')
             return label
 
         new = link_re.sub(fix, text)
@@ -146,6 +134,20 @@ if dangling:
 
 print(f"publish: link check passed ({stripped} private-pointing link(s) stripped)")
 PYEOF
+
+# --- 4. Deny-grep gate (runs on the sanitized tree — what actually ships) ---
+have_patterns=0
+while IFS= read -r pat; do
+  [ -n "$pat" ] && [ "${pat:0:1}" != "#" ] || continue
+  have_patterns=1
+  if hits="$(grep -rEl -- "$pat" "$staging" 2>/dev/null)"; then
+    echo "publish: deny pattern matched in export:" >&2
+    echo "$hits" | sed "s|^$staging/|  |" >&2
+    die "deny-grep gate failed (pattern not echoed — it is private)."
+  fi
+done < "$DENYLIST"
+[ "$have_patterns" -eq 1 ] || die ".publish-denylist contains no patterns — refusing to publish unguarded."
+echo "publish: deny-grep gate passed"
 
 # --- 5. Copy into the working tree and commit ---
 for p in "${allowed_paths[@]}"; do
