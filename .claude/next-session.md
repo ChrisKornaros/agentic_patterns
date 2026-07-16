@@ -1,44 +1,37 @@
-# Next session — post-pipeline follow-ups
+# Next session — steady state, allowlist growth on demand
 
-> Updated 2026-07-15 after the publish-pipeline session. This repo is
+> Updated 2026-07-15 after the follow-ups session. This repo is
 > PUBLIC — keep every committed file (including this one) free of
 > private-repo specifics.
 
 ## State as of this handoff
 
-The publish pipeline and first curated export shipped in the
-`feat/publish-pipeline` PR:
+All queued post-pipeline follow-ups are closed:
 
-- `scripts/publish.sh` — one-way export: mirror refresh → allowlist
-  rsync into staging → link sanitization + resolution check →
-  deny-grep gate (on the sanitized tree, i.e. exactly what ships) →
-  one `sync from source @ <short-sha>` commit. Refuses to run on
-  `main`, on a dirty tree, without a local `.publish-denylist`, or
-  with an empty one.
-- `scripts/publish-allowlist.txt` — committed; first curated set =
-  session-loop, guardrail, and debugging bundles + area READMEs
-  (32 files from source `6e8578a`).
-- `.publish-denylist` — local-only and gitignored, by design. Seeded
-  and verified in-session (every pattern match-tested, zero false
-  positives; final tree grep clean).
+- **Repo contract** — `CLAUDE.md` added (PR #3): native-vs-exported
+  boundary, publish rules, branch + PR + merge-popup workflow.
+- **Denylist backed up privately** (PR in the source repo). The local
+  `.publish-denylist` header says where; sync the backup after editing
+  the local file.
+- **Cosmetic path leak fixed sanitizer-side** (PR #4). The handoff had
+  assumed bare paths in source prose; diagnosis showed the source was
+  fully linked and the leaks were sanitizer artifacts — kept link
+  labels embedding paths, plus frontmatter `evidence:` lists that
+  can't hold links. `scripts/publish.sh` now collapses path tokens in
+  kept labels and reduces frontmatter paths to `basename#anchor`.
+  Verified with a full publish run (sync @ source `d14ced1`).
 
-## Queued next (small, in rough order)
+## Queued next
 
-1. **Private repo pointer note** — separate PR *there*: "public
-   mirror: agentic_patterns, published by its script — never edit the
-   mirror directly" + memory update. (Was step 4 of the original
-   handoff; still open.)
-2. **Back up the denylist privately** — it exists only on this
-   machine; losing it silently weakens future publishes. A copy in a
-   private store (vault) is enough.
-3. **Cosmetic pass upstream (optional)** — bare path mentions in
-   source prose (not markdown links) pass through the sanitizer
-   untouched; they leak no secrets, only internal doc names. Fix in
-   the source repo if it bothers, not here.
-4. **Allowlist growth** — add bundles as blog posts need them; edit
-   `scripts/publish-allowlist.txt`, re-run the script.
+Nothing is queued. This repo is demand-driven from here:
+
+1. **Allowlist growth** — when a blog post needs a bundle, add it to
+   `scripts/publish-allowlist.txt` and re-run `scripts/publish.sh`.
+2. **(Only if it ever bothers)** backticked code-span paths in source
+   prose still ship verbatim — they're intentional module content, so
+   any change is an upstream editorial call, not a sanitizer fix.
 
 ## Conventions
 
-Branch + PR, Chris merges in the GitHub UI; no direct pushes to main.
-Publishing is always `scripts/publish.sh` — never hand-copy content.
+See `CLAUDE.md` (added this session). Publishing is always
+`scripts/publish.sh` — never hand-copy content.
