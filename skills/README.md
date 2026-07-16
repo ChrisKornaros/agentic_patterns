@@ -6,7 +6,7 @@ you remember it exists and paste it; a skill is auto-surfaced
 mid-session (invoked as `/<name>` or model-selected by its
 `description`). This folder promotes the highest-friction-relief
 prompts into that shape, per
-../roadmap/08-pre-content-manager-optimization.md track C1.
+`08-pre-content-manager-optimization` track C1.
 
 The layout mirrors the Hermes *writing*-profile skills
 (`skills`):
@@ -23,7 +23,7 @@ one directory per skill, each holding a single `SKILL.md`.
   frontmatter (`module: <name>`); the install script auto-pairs on
   that field, and standalone skills are vendored with `--skill <name>`.
   This is C1 part 2, now live — see
-  ../modules/VENDORING.md §9.
+  `VENDORING` §9.
 - **Chris's own machine.** The two highest-value skills are also
   wired as live `/`-commands in
   `commands` —
@@ -67,7 +67,7 @@ prose — that stays single-homed in `prompts/`. This matches the Hermes
 The `session-wrapup`, `session-start`, and `phase-kickoff` skills shim
 modules that already exist; `substrate-preflight` and `tight-review` now
 do too — their backing modules were extracted in
-roadmap/10 A4, closing the
+`roadmap/10` A4, closing the
 "C1 surfaces the gap A1 fills" loop the roadmap named, so the install
 script auto-pairs each of those five skills onto its module. `plane-board-ops` is the one skill whose `source:` is a **tool
 doc** (`CONVENTIONS`) rather

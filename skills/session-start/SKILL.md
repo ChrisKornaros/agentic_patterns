@@ -29,7 +29,7 @@ don't pull `main` over it. Surface it and ask: resume, or stash/branch fresh.
 
 ## 2. Read the handoff
 
-- Read `.claude/next-session.md` first if it
+- Read ``next-session`` first if it
   exists (a `SessionStart` hook may have surfaced it — read it deliberately
   anyway).
 - Absent / empty of direction → fall back to the host's roadmap / planning doc.

@@ -47,6 +47,6 @@ refreshed weekly is often a better substrate than a live API for
 read-mostly use cases, even before the rate-limit math.
 
 Cross-refs:
-- playbook/02-workflow-patterns.md §Updated/5
-- playbook/07-anti-patterns.md #11
-- case-studies/product-use-tracker/playbook.md §1.4.2–§1.4.3
+- `02-workflow-patterns` §`Updated/5`
+- `07-anti-patterns` #11
+- `playbook` §1.4.2–§1.4.3

@@ -26,7 +26,7 @@ ask whether to resume it or stash/branch fresh.
 
 ### 2. Read the handoff
 
-- If `.claude/next-session.md` exists, read
+- If ``next-session`` exists, read
   it first. (A `SessionStart` hook may have already surfaced it into
   context — read it deliberately anyway; the file is the source, the hook
   injection is a convenience.)

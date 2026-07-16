@@ -6,8 +6,8 @@ lifecycle: stable
 dependencies: []
 evidence:
   - prompts/substrate-preflight.md
-  - case-studies/product-use-tracker/playbook.md#142-the-b2--b2-redo-lesson--mid-phase-re-architecture-is-ok
-  - playbook/07-anti-patterns.md#11-external-paid-surface-introduced-without-a-pre-locked-cost-discipline
+  - playbook.md#142-the-b2--b2-redo-lesson--mid-phase-re-architecture-is-ok
+  - 07-anti-patterns.md#11-external-paid-surface-introduced-without-a-pre-locked-cost-discipline
 applies_when:
   - a phase is about to depend on an external API, paid/metered service, or rate-limited source
   - the vendor surface hasn't been load-bearing-tested in this repo yet
@@ -35,7 +35,7 @@ redo PR — in the master case study, PUT's Smart Add B2 became B2-redo
 when OpenFoodFacts' 10 req/min REST limit met a search-as-you-type UX
 that needed ~30 req/min in practice
 (case study §1.4.2,
-playbook/07 #11).
+`playbook/07` #11).
 Question (5) is the cost-discipline anchor — a paid call from a request
 handler is the anti-pattern, a queued job with bounded concurrency is
 the pattern. Question (7) is the leverage question: a local mirror

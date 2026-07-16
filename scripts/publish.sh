@@ -66,11 +66,56 @@ import os, re, sys
 
 staging = sys.argv[1]
 link_re = re.compile(r'\[([^\]]*)\]\(([^)\s]+)\)')
+# A repo-path-shaped token: at least one dir component, e.g.
+# playbook/07-anti-patterns.md#11-... or ../roadmap/06-tech-stack-defaults.md
+path_token_re = re.compile(r'(?:\.\./)*(?:[\w.-]+/)+[\w.-]+(?:#[\w.-]+)?')
 
 def is_external(t):
     return t.startswith(('http://', 'https://', 'mailto:', '#'))
 
+def collapse_path(tok):
+    # Reduce a private-repo path to the least identifying useful form:
+    # basename without extension; keep the parent dir when the basename
+    # is generic (README/index) or has no letters (roadmap/10).
+    rel = tok.split('#')[0].rstrip('/')
+    base = os.path.splitext(os.path.basename(rel))[0]
+    if base.lower() in ('readme', 'index') or not re.search(r'[A-Za-z]', base):
+        parts = rel.lstrip('./').split('/')
+        base = '/'.join(parts[-2:]) if len(parts) > 1 else parts[0]
+        base = os.path.splitext(base)[0] if base.lower().endswith('.md') else base
+    return '`{}`'.format(base or 'link')
+
+fm_item_re = re.compile(r'^(\s*-\s+)((?:[\w.-]+/)+[\w.-]+(?:#[\S]*)?)\s*$')
 stripped = 0
+fm_fixed = 0
+
+def fix_frontmatter(text):
+    # YAML frontmatter list entries (evidence:) hold repo-root-relative
+    # paths that can't be markdown links. Reduce entries whose target is
+    # not in the export to basename(#anchor) — provenance shape survives,
+    # private dir names don't.
+    global fm_fixed
+    if not text.startswith('---\n'):
+        return text
+    end = text.find('\n---\n', 4)
+    if end == -1:
+        return text
+    lines = text[:end].split('\n')
+    for i, line in enumerate(lines):
+        m = fm_item_re.match(line)
+        if not m:
+            continue
+        pathpart = m.group(2).split('#')[0]
+        if os.path.exists(os.path.join(staging, pathpart)):
+            continue
+        anchor = m.group(2)[len(pathpart):]
+        base = os.path.basename(pathpart)
+        if os.path.splitext(base)[0].lower() in ('readme', 'index'):
+            base = '/'.join(pathpart.split('/')[-2:])
+        lines[i] = m.group(1) + base + anchor
+        fm_fixed += 1
+    return '\n'.join(lines) + text[end:]
+
 for root, _, files in os.walk(staging):
     for name in files:
         if not name.endswith('.md'):
@@ -93,15 +138,16 @@ for root, _, files in os.walk(staging):
                 return m.group(0)
             stripped += 1
             # Link points outside the export: keep text, drop link. If the
-            # label is itself a path, collapse it to a backticked basename
-            # so no private-repo path ships as prose.
+            # label is itself a path, collapse it to a backticked basename;
+            # otherwise collapse any path-shaped tokens *inside* the kept
+            # label ("playbook/07-anti-patterns.md #11" and friends) so no
+            # private-repo path ships as prose.
             l = label.strip()
             if l == target or ('/' in l and re.fullmatch(r'[\w./#-]+', l)):
-                base = os.path.basename((rel or target).rstrip('/'))
-                return '`{}`'.format(os.path.splitext(base)[0] or 'link')
-            return label
+                return collapse_path(rel or target)
+            return path_token_re.sub(lambda t: collapse_path(t.group(0)), label)
 
-        new = link_re.sub(fix, text)
+        new = fix_frontmatter(link_re.sub(fix, text))
         if new != text:
             with open(path, 'w', encoding='utf-8') as f:
                 f.write(new)
@@ -132,7 +178,7 @@ if dangling:
         print(f"  {d}", file=sys.stderr)
     sys.exit(1)
 
-print(f"publish: link check passed ({stripped} private-pointing link(s) stripped)")
+print(f"publish: link check passed ({stripped} private-pointing link(s) stripped, {fm_fixed} frontmatter path(s) reduced)")
 PYEOF
 
 # --- 4. Deny-grep gate (runs on the sanitized tree — what actually ships) ---

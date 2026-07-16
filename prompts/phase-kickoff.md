@@ -33,4 +33,4 @@ Step (4) was added 2026-05-23 after the v3 cycle revealed that
 to the auto-PR shape at kickoff makes the wrap-up implicit; the agent
 just executes the script.
 
-Cross-ref: playbook/02-workflow-patterns.md §Updated/1.
+Cross-ref: `02-workflow-patterns` §`Updated/1`.
