@@ -1,0 +1,16 @@
+{
+  "_comment": "Portable SessionStart-hook snippet for the session-handoff module. Merge the `hooks.SessionStart` entry below into a host repo's .claude/settings.json (append to the existing SessionStart array if one is present). It runs session_handoff_kickoff.py — the runtime half of this module — which surfaces a committed `.claude/next-session.md` (the kickoff the previous session wrote) into the new session's opening context, so the *read* side of the handoff is mechanical rather than agent-honored. The inline `[ -f \"$f\" ] || exit 0` guard makes the snippet a safe no-op until you vendor this module (which ships session_handoff_kickoff.py under modules/session-handoff/); the script itself also no-ops when no next-session.md exists and FAILS OPEN on any error, so it can never wedge a session. Disable for one session with SESSION_HANDOFF_KICKOFF_DISABLED=1. Path assumes modules are vendored under $CLAUDE_PROJECT_DIR/modules/ (the VENDORING.md convention); adjust if your host vendors elsewhere. See the companion index.md 'Companion files' section for the prose.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'f=\"$CLAUDE_PROJECT_DIR/modules/session-handoff/session_handoff_kickoff.py\"; [ -f \"$f\" ] || exit 0; exec python3 \"$f\"'"
+          }
+        ]
+      }
+    ]
+  }
+}

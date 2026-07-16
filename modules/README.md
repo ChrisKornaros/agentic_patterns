@@ -1,0 +1,248 @@
+# modules/
+
+Portable instruction modules — frontmatter-tagged markdown files
+that any host repo can vendor into its `CLAUDE.md` (or per-role
+`CLAUDE.md`) without copy-pasting rule text.
+
+> **Status:** 🟡 partial. 26 modules extracted —
+> the v1 pilot covered one of each shape (`guardrail`, `workflow`,
+> `prompt`), the tech-stack-defaults umbrella from
+> `06-tech-stack-defaults`
+> adds three more (`python-uv-only`, `duckdb-default-store`,
+> `arm64-target-arch`), the scope-of-action guardrail family
+> now covers both `stay-in-project-tree` (where the agent acts)
+> and `no-sudo-as-shortcut` (with what authority), and the
+> file-access guardrail family adds `no-cat-head-via-bash`
+> (bundled with H2 per
+> `README`),
+> and the day-to-day git-flow family
+> (`08-pre-content-manager-optimization`
+> track A1) adds the four guardrails/workflows a fresh repo composes
+> first — `git-flow-branch-naming`, `smoke-before-commit`,
+> `auto-commit-on-branch-done`, `ask-merged-via-popup` — and the
+> project-integration family (`secrets-no-plaintext`,
+> `external-api-adapter-boundary`, `no-live-external-in-tests`,
+> `adr-per-major-decision`), extracted ahead of the `content_manager`
+> build that is their forcing case, plus the session-end knowledge
+> layer `session-handoff` and the per-edit coding-discipline family
+> (`assumptions-before-code`, `minimum-code-first`,
+> `surgical-diffs-only`, `verifiable-goal-before-code`) — the
+> library's first external-source modules, adapted from Andrej
+> Karpathy's coding guidelines.
+> Finally, the `10-fable-window-finalization`
+> A4 extraction tail closes four more — the `substrate-preflight` and
+> `tight-code-review` prompt modules (which retire the
+> skill-first/module-later half-state by giving the two skills a
+> `module:` to auto-pair on) plus the `docs-two-layer` and
+> `status-emoji-discipline` doc/tracking guardrails.
+> The full backlog and migration plan live in
+> ../roadmap/03-instruction-modules.md §5.
+
+## What lives here
+
+| Path | Purpose |
+|---|---|
+| `frontmatter` | Field-by-field reference for the module frontmatter. Authoritative spec text lives in `03-instruction-modules`; this file is the short reference. |
+| `VENDORING` | Step-by-step recipe for adopting one or more of these modules in a host repo — `MODULES.md` ledger, host `CLAUDE.md` shape, permission-settings, update flow. |
+| `<name>/index.md` | One module per directory. Directory layout leaves room for companion files (settings snippets, examples) as types grow. |
+
+## Modules in this repo
+
+### v1 pilot
+
+| Module | Type | Source rule extracted from | Status |
+|---|---|---|---|
+| git-flow-no-direct-main | guardrail | `git-workflow`, agents/_shared/common-guardrails.md §Never | 🟢 stable |
+| [git-flow-session-end](git-flow-session-end/index.md) | workflow | templates/_shared/git-workflow.md §The session-end loop | 🟢 stable · ships an optional `Stop`-hook enforcer (`session_end_guard.py` + `settings-snippet.json`) |
+| [phase-kickoff](phase-kickoff/index.md) | prompt | [prompts/phase-kickoff.md](../prompts/phase-kickoff.md) | 🟢 stable |
+
+### Tech-stack defaults
+
+Per `06-tech-stack-defaults` —
+the stable per-stack tooling picks that should be enforced at
+agent runtime instead of relearned every project.
+
+| Module | Type | Source rule extracted from | Status |
+|---|---|---|---|
+| python-uv-only | guardrail | `ops`, `playbook` | 🟢 stable |
+| duckdb-default-store | guardrail | tools-stack/storage.md §Default: DuckDB | 🟢 stable |
+| arm64-target-arch | gotcha | `ops`, `README` | 🟢 stable |
+
+### Scope-of-action
+
+Guardrails covering where the agent is allowed to act on the
+filesystem and which capabilities count as "elevated."
+`stay-in-project-tree` bounds *where*; `no-sudo-as-shortcut`
+bounds *with what authority*. The two together cover the class of
+failure where an agent technically completes a task but leaves the
+host in a state nobody reviewed.
+
+| Module | Type | Source rule extracted from | Status |
+|---|---|---|---|
+| stay-in-project-tree | guardrail | agents/_shared/common-guardrails.md §Never ("Reach outside the repo's working tree"), `settings` deny-list | 🟢 stable |
+| no-sudo-as-shortcut | guardrail | agents/_shared/common-guardrails.md §Never ("Reach for `sudo` as a shortcut"), playbook/07-anti-patterns.md #13, `settings` deny-list | 🟢 stable |
+
+### File-access surface
+
+The companion family that the H2 re-read-collapse experiment
+(per `README`)
+exercises from two angles: a runtime hook on the `Read` tool plus a
+prose guardrail closing the Bash-cat workaround the hook can't see.
+
+| Module | Type | Source rule extracted from | Status |
+|---|---|---|---|
+| no-cat-head-via-bash | guardrail | `README` baseline (~25% of Bash spend), root CLAUDE.md "Avoid using this tool to run `cat`/`head`/..." guidance | 🟡 experimental |
+
+### Day-to-day git-flow
+
+The guardrails and workflow modules a fresh repo composes first,
+extracted per `08-pre-content-manager-optimization`
+track A1 so `content_manager`'s bootstrap assembles a complete set
+instead of falling back to hand-written rules. The two workflow
+modules are companions to (and `dependencies:` of)
+[git-flow-session-end](git-flow-session-end/index.md) — it
+orchestrates the loop; they own the auto-commit and merge-popup
+slices. [session-handoff](session-handoff/index.md) sits the other
+way round — it `depends:` on `git-flow-session-end` and runs *after*
+the loop, adding the cross-session knowledge layer (lesson capture +
+next-session kickoff).
+
+| Module | Type | Source rule extracted from | Status |
+|---|---|---|---|
+| git-flow-branch-naming | guardrail | templates/_shared/git-workflow.md §Branch naming | 🟢 stable |
+| smoke-before-commit | guardrail | `04-testing-verification` | 🟢 stable |
+| auto-commit-on-branch-done | workflow | agents/_shared/common-guardrails.md §Always | 🟢 stable |
+| ask-merged-via-popup | workflow | agents/_shared/common-guardrails.md §Always, templates/_shared/git-workflow.md §The session-end loop | 🟢 stable |
+| [session-handoff](session-handoff/index.md) | workflow | playbook/README.md §Quick-reference card (#8, #10), [prompts/phase-kickoff.md](../prompts/phase-kickoff.md), `lessons-log` | 🟢 stable · runs *after* `git-flow-session-end`: cross-project lesson capture into `knowledge` + roadmap-grounded `.claude/next-session.md` |
+
+### Project-integration
+
+The guardrails an application that integrates external services
+composes — extracted ahead of the
+`content_manager`
+build, which is their forcing case (it authenticates to and publishes
+on YouTube/Instagram/TikTok behind a secrets boundary, with a list of
+"do not relitigate" decisions). These four codify the rules that
+project surfaced; the citations are repo-internal so the modules stay
+vendorable. Marked `experimental` where the rule generalizes an
+existing one ahead of a published case study.
+
+| Module | Type | Source rule extracted from | Status |
+|---|---|---|---|
+| secrets-no-plaintext | guardrail | agents/_shared/common-guardrails.md §Never, tools-stack/ops.md §Secrets | 🟢 stable |
+| external-api-adapter-boundary | guardrail | playbook/03-design-patterns.md §The seven patterns, tools-stack/web.md §Patterns to keep | 🟡 experimental |
+| no-live-external-in-tests | guardrail | playbook/04-testing-verification.md §Live DB never mutated, agents/_shared/common-guardrails.md §Never | 🟢 stable |
+| adr-per-major-decision | workflow | playbook/03-design-patterns.md §The seven patterns, `REQUIREMENTS_AI.template` | 🟡 experimental |
+
+`no-live-external-in-tests` supersedes the sketched `no-live-db-in-tests`
+scope — it covers any external system, the live DB included.
+
+### Per-edit coding discipline
+
+Guardrails on the code itself — what happens between "branch
+created" and "smoke run," a layer the process/orchestration families
+above don't touch. Adapted (not extracted) from
+[Andrej Karpathy's coding guidelines](https://github.com/multica-ai/andrej-karpathy-skills)
+(published via [this X post](https://x.com/karpathy/status/2015883857489522876)) —
+the library's first external-source modules, hence all
+`experimental` until our own case-study evidence accrues. The
+[scope-guard skill](../skills/scope-guard/SKILL.md) covers the
+adjacent PR-boundary angle (what else gets *packaged*); these four
+cover the inside-the-diff discipline. Each ships the
+`## This rule is working if` success-marker section this family
+introduced to the body-shape spec.
+
+| Module | Type | Source rule adapted from | Status |
+|---|---|---|---|
+| assumptions-before-code | guardrail | Karpathy guidelines §"Think before coding" | 🟡 experimental |
+| [minimum-code-first](minimum-code-first/index.md) | guardrail | Karpathy guidelines §"Simplicity first" | 🟡 experimental |
+| surgical-diffs-only | guardrail | Karpathy guidelines §"Surgical changes" | 🟡 experimental |
+| [verifiable-goal-before-code](verifiable-goal-before-code/index.md) | workflow | Karpathy guidelines §"Goal-driven execution" (front half; smoke-before-commit + no-live-external-in-tests already own the verify half) | 🟡 experimental |
+
+### Extraction tail (roadmap/10 A4)
+
+The four candidates the `10-fable-window-finalization`
+A4 row called out — extracted together so the Fable window opened with
+the library's pending tail closed. The two `prompt` modules were already
+shipping as skills sourcing `prompts/` directly; extracting them lets
+each skill declare a `module:` and **auto-pair** in
+`install-modules`, retiring
+the intentional skill-first/module-later half-state. The two guardrails
+codify the doc/tracking conventions a fresh repo composes early.
+
+| Module | Type | Source rule extracted from | Status |
+|---|---|---|---|
+| [substrate-preflight](substrate-preflight/index.md) | prompt | [../prompts/substrate-preflight.md](../prompts/substrate-preflight.md), [../skills/substrate-preflight/SKILL.md](../skills/substrate-preflight/SKILL.md) | 🟢 stable · skill auto-pairs via `module:` |
+| [tight-code-review](tight-code-review/index.md) | prompt | [../prompts/tight-code-review.md](../prompts/tight-code-review.md), [../skills/tight-review/SKILL.md](../skills/tight-review/SKILL.md) | 🟡 experimental · skill auto-pairs via `module:` |
+| docs-two-layer | guardrail | `01-documentation-stack`, ../case-studies/product-use-tracker/playbook.md §2 | 🟢 stable |
+| status-emoji-discipline | guardrail | ../playbook/02-workflow-patterns.md §4, ../case-studies/product-use-tracker/playbook.md §1.4.1 | 🟢 stable |
+
+### Pending extraction
+
+The remaining candidates are the **role modules** — still scattered
+across `agents` role definitions; they'll be extracted in
+follow-up branches as the multi-agent team firms up (the `po/` flesh-out
+in `10-fable-window-finalization` A2 is the
+next forcing case). See
+../roadmap/08-pre-content-manager-optimization.md §4-A1
+for the `content_manager`-relevant history.
+
+## How a host repo uses a module
+
+The full composition rules live in
+../roadmap/03-instruction-modules.md §4;
+the short version:
+
+1. **Vendor.** Copy the module directory into the host's
+   `modules/<name>/` (v1 mechanism — submodule and symlink are
+   options for later). Record `name`, `version`, `source`, and
+   `copied_at` in the host's `MODULES.md` ledger.
+2. **Reference.** Link to it from the host's root `CLAUDE.md`
+   under a `## Composed modules` table. The link, not the rule
+   text, is the load-bearing thing — when the canonical module
+   evolves, re-vendor and the host inherits the update.
+3. **Override locally only when needed.** Project-local
+   `CLAUDE.md` content beats vendored modules (§4.3 of the spec).
+   If the host overrides, note it in `MODULES.md` so a future
+   reader knows the conflict was intentional.
+
+## How a module earns its place
+
+Same bar as
+agents/_shared/common-guardrails.md §"How rules earn their place here",
+adapted for portability:
+
+1. **Cross-project.** The rule has to plausibly apply to more
+   than one host repo (otherwise it's project-specific and
+   belongs in the host's `CLAUDE.md`, not here).
+2. **Enforceable.** Phrased as a thing to do or not do, with
+   concrete failure modes — not "be thoughtful about X."
+3. **Cited.** `lifecycle: stable` modules MUST have at least one
+   `evidence:` entry pointing to a case study or playbook essay.
+   `lifecycle: experimental` modules can ship without evidence
+   but get reviewed before promotion.
+
+## Verify
+
+There's no compiler yet (per spec §2 non-goals). Manual checks:
+
+- Every module directory has an `index.md`.
+- Every `index.md` has frontmatter with `name`, `type`, `scope`,
+  `lifecycle`, `version`, and (for `lifecycle: stable`)
+  `evidence:`.
+- Every `name:` matches the directory name.
+- Every `dependencies:` entry points to a module that exists in
+  this directory.
+
+`check_modules` asserts all
+of these (including the `stable ⇒ evidence:` rule) and exits non-zero
+on any violation — run it alongside `check_links.sh`.
+
+## Cross-references
+
+- Spec: `03-instruction-modules`
+- Structural rationale: ../roadmap/04-structural-proposal.md §3.2
+- Where the rules currently live (source for extraction):
+  `common-guardrails`,
+  `git-workflow`,
+  [../prompts/](../prompts/)
