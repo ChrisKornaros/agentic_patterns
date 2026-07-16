@@ -1,0 +1,39 @@
+# Paths exported from the source repo, one per line, repo-relative.
+# Comments (#) and blank lines are ignored. This file is committed —
+# the set of published paths is public by definition.
+
+# Area orientation docs
+modules/README.md
+skills/README.md
+prompts/README.md
+
+# Session loop
+modules/session-handoff
+modules/phase-kickoff
+modules/git-flow-session-end
+skills/session-start
+skills/session-wrapup
+skills/phase-kickoff
+prompts/session-start.md
+prompts/session-wrapup.md
+prompts/phase-kickoff.md
+
+# Guardrails
+modules/substrate-preflight
+modules/tight-code-review
+modules/minimum-code-first
+modules/verifiable-goal-before-code
+skills/scope-guard
+skills/substrate-preflight
+skills/tight-review
+prompts/scope-guard.md
+prompts/substrate-preflight.md
+prompts/tight-code-review.md
+
+# Debugging
+skills/minimal-repro
+skills/explain-back
+skills/constraint-check
+prompts/minimal-repro.md
+prompts/explain-back.md
+prompts/constraint-check.md

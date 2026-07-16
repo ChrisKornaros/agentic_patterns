@@ -1,44 +1,44 @@
-# Next session — build the publish pipeline + first curated export
+# Next session — post-pipeline follow-ups
 
-> Written 2026-07-15 at repo creation. This repo is PUBLIC — keep every
-> committed file (including this one) free of private-repo specifics.
+> Updated 2026-07-15 after the publish-pipeline session. This repo is
+> PUBLIC — keep every committed file (including this one) free of
+> private-repo specifics.
 
-## What this repo is
+## State as of this handoff
 
-A one-way **published artifact**: the tested, reusable subset of a
-private research repo (modules, skills, prompts, templates, subdir
-READMEs), exported here with fresh history so it can be cited from
-blog posts and a public portfolio. The private repo stays canonical;
-nothing is ever edited here directly except this repo's own docs and
-tooling. License: MIT (chosen over copyleft for reuse + attribution).
+The publish pipeline and first curated export shipped in the
+`feat/publish-pipeline` PR:
 
-## Session scope, in order
+- `scripts/publish.sh` — one-way export: mirror refresh → allowlist
+  rsync into staging → link sanitization + resolution check →
+  deny-grep gate (on the sanitized tree, i.e. exactly what ships) →
+  one `sync from source @ <short-sha>` commit. Refuses to run on
+  `main`, on a dirty tree, without a local `.publish-denylist`, or
+  with an empty one.
+- `scripts/publish-allowlist.txt` — committed; first curated set =
+  session-loop, guardrail, and debugging bundles + area READMEs
+  (32 files from source `6e8578a`).
+- `.publish-denylist` — local-only and gitignored, by design. Seeded
+  and verified in-session (every pattern match-tested, zero false
+  positives; final tree grep clean).
 
-1. **Skeleton polish** — README: what/why, layout table, "how this is
-   published" note, license line. No content import yet.
-2. **`scripts/publish.sh`** — the one-way export:
-   - Refresh the local mirror of the private source repo (the
-     cache-fetch recipe in the machine-global `~/.claude/CLAUDE.md`),
-     then rsync an **explicit allowlist** (never a blocklist) into
-     this working tree.
-   - **Deny-grep gate**: fail the publish if any pattern from
-     `.publish-denylist` matches the export. That file is
-     **gitignored and stays local** (the patterns themselves are
-     private: hostnames, absolute paths, email, infra names). Script
-     hard-fails if the file is missing. Seed it in-session with Chris.
-   - **Link sanitization**: rewrite/strip relative links that point
-     into private-only areas of the source repo (its roadmap, case
-     studies, notes); then run a link-resolution check over the
-     exported tree so no dangling link ships.
-   - Each run = one commit: `sync from source @ <short-sha>`.
-3. **First curated export — STAGED, not pushed.** Ask Chris (popup)
-   for the initial allowlist: start with the few modules/skills/
-   prompts he'd cite in a blog post, not the whole library. Leave the
-   result as a local branch for his review; he pushes/merges.
-4. **Follow-up in the private repo (separate PR there):** pointer note
-   ("public mirror: agentic_patterns, published by its script — never
-   edit the mirror directly") + memory update.
+## Queued next (small, in rough order)
+
+1. **Private repo pointer note** — separate PR *there*: "public
+   mirror: agentic_patterns, published by its script — never edit the
+   mirror directly" + memory update. (Was step 4 of the original
+   handoff; still open.)
+2. **Back up the denylist privately** — it exists only on this
+   machine; losing it silently weakens future publishes. A copy in a
+   private store (vault) is enough.
+3. **Cosmetic pass upstream (optional)** — bare path mentions in
+   source prose (not markdown links) pass through the sanitizer
+   untouched; they leak no secrets, only internal doc names. Fix in
+   the source repo if it bothers, not here.
+4. **Allowlist growth** — add bundles as blog posts need them; edit
+   `scripts/publish-allowlist.txt`, re-run the script.
 
 ## Conventions
 
 Branch + PR, Chris merges in the GitHub UI; no direct pushes to main.
+Publishing is always `scripts/publish.sh` — never hand-copy content.
