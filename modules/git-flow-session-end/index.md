@@ -16,7 +16,7 @@ evidence:
 applies_when:
   - host follows GitHub Flow (sessions = one branch = one PR)
   - human is available to merge during the session
-version: 4
+version: 5
 ---
 
 # Git Flow — session-end loop
@@ -170,7 +170,7 @@ question after a short pause rather than ending the turn. If
 entirely and wait for the human's review notes — the branch is
 still live work.
 
-## Enforcement (optional Stop-hook companion)
+## Enforcement (optional hook companions)
 
 The steps above are a *prompt* — they rely on the agent honoring them.
 In long sessions the most-dropped step is the hand-off: opening the PR
@@ -217,6 +217,33 @@ call `AskUserQuestion` — that remains the agent's action. The hook turns a
 silent miss into a visible, self-correcting prompt. Disable for a session
 with `SESSION_END_GUARD_DISABLED=1`; if the human has explicitly deferred
 the merge, the OPEN-state nudge says so and the agent may stop.
+
+### PreToolUse companion — wrap-up-surface nudge on `gh pr create`
+
+The H5 experiment
+(RESULT §2–§4)
+measured that sessions ship their end-of-session PR **without loading any
+wrap-up surface** 60–67% of the time — the workflow mostly still happens
+(via the Stop guard, the injected handoff, and priors), but the module
+text itself goes unread, which is exactly the drift the trigger-strength
+ladder warns about: *a pointer is only as good as its trigger.*
+
+[`pre_pr_wrapup_nudge.py`](pre_pr_wrapup_nudge.py) (wired in the same
+[`settings-snippet.json`](settings-snippet.json)) gives the pointer a
+decision-time trigger: when a Bash `gh pr create` fires and no wrap-up
+surface has loaded this session — no `/session-wrapup` skill invocation,
+no Read of this module's `index.md` or a `session-wrapup/SKILL.md` — it
+injects a one-line, **non-blocking** `additionalContext` reminder to load
+the loop and run the not-yet-done steps. Design notes:
+
+- Detection checks **actual transcript events** (tool_use blocks,
+  user-typed slash commands), never a raw substring scan — a blob search
+  would false-positive on the CLAUDE.md text quoted into every
+  transcript (the H2 lesson: act only on positive confirmation).
+- Fires **at most once per session**; the PR creation itself proceeds
+  untouched (no `permissionDecision`), and the nudge lands next to the
+  tool result in time for the post-PR half of the loop.
+- Fails open on any error. Disable with `WRAPUP_NUDGE_DISABLED=1`.
 
 ## Anti-patterns
 

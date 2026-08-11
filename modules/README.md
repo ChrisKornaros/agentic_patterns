@@ -4,7 +4,7 @@ Portable instruction modules — frontmatter-tagged markdown files
 that any host repo can vendor into its `CLAUDE.md` (or per-role
 `CLAUDE.md`) without copy-pasting rule text.
 
-> **Status:** 🟡 partial. 26 modules extracted —
+> **Status:** 🟡 partial. 30 modules extracted —
 > the v1 pilot covered one of each shape (`guardrail`, `workflow`,
 > `prompt`), the tech-stack-defaults umbrella from
 > `06-tech-stack-defaults`
@@ -34,7 +34,13 @@ that any host repo can vendor into its `CLAUDE.md` (or per-role
 > `tight-code-review` prompt modules (which retire the
 > skill-first/module-later half-state by giving the two skills a
 > `module:` to auto-pair on) plus the `docs-two-layer` and
-> `status-emoji-discipline` doc/tracking guardrails.
+> `status-emoji-discipline` doc/tracking guardrails — and
+> `12-progressive-disclosure-context-slimming`
+> S6 adds `claude-md-as-map`, the measured (H5) map-not-territory
+> guardrail for the eager CLAUDE.md chain, and
+> `13-teaching-agent-framework` S1 adds the
+> teaching family (`guide-dont-solve`, `grounded-explanations`,
+> `hint-ladder`) — the tutor stance for learning repos.
 > The full backlog and migration plan live in
 > `03-instruction-modules` §5.
 
@@ -52,8 +58,8 @@ that any host repo can vendor into its `CLAUDE.md` (or per-role
 
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
-| git-flow-no-direct-main | guardrail | `git-workflow`, `common-guardrails` §Never | 🟢 stable |
-| [git-flow-session-end](git-flow-session-end/index.md) | workflow | `git-workflow` §The session-end loop | 🟢 stable · ships an optional `Stop`-hook enforcer (`session_end_guard.py` + `settings-snippet.json`) |
+| [git-flow-no-direct-main](git-flow-no-direct-main/index.md) | guardrail | `git-workflow`, `common-guardrails` §Never | 🟢 stable |
+| [git-flow-session-end](git-flow-session-end/index.md) | workflow | `git-workflow` §The session-end loop | 🟢 stable · ships optional hook enforcers: `Stop` (`session_end_guard.py`) + a `PreToolUse` wrap-up nudge on `gh pr create` (`pre_pr_wrapup_nudge.py`, the H5 §4 trigger-strengthening) via `settings-snippet.json` |
 | [phase-kickoff](phase-kickoff/index.md) | prompt | [prompts/phase-kickoff.md](../prompts/phase-kickoff.md) | 🟢 stable |
 
 ### Tech-stack defaults
@@ -109,10 +115,10 @@ next-session kickoff).
 
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
-| git-flow-branch-naming | guardrail | `git-workflow` §Branch naming | 🟢 stable |
-| smoke-before-commit | guardrail | `04-testing-verification` | 🟢 stable |
-| auto-commit-on-branch-done | workflow | `common-guardrails` §Always | 🟢 stable |
-| ask-merged-via-popup | workflow | `common-guardrails` §Always, `git-workflow` §The session-end loop | 🟢 stable |
+| [git-flow-branch-naming](git-flow-branch-naming/index.md) | guardrail | `git-workflow` §Branch naming | 🟢 stable |
+| [smoke-before-commit](smoke-before-commit/index.md) | guardrail | `04-testing-verification` | 🟢 stable |
+| [auto-commit-on-branch-done](auto-commit-on-branch-done/index.md) | workflow | `common-guardrails` §Always | 🟢 stable |
+| [ask-merged-via-popup](ask-merged-via-popup/index.md) | workflow | `common-guardrails` §Always, `git-workflow` §The session-end loop | 🟢 stable |
 | [session-handoff](session-handoff/index.md) | workflow | `playbook/README` §Quick-reference card (#8, #10), [prompts/phase-kickoff.md](../prompts/phase-kickoff.md), `lessons-log` | 🟢 stable · runs *after* `git-flow-session-end`: cross-project lesson capture into `knowledge` + roadmap-grounded `.claude/next-session.md` |
 
 ### Project-integration
@@ -129,10 +135,10 @@ existing one ahead of a published case study.
 
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
-| secrets-no-plaintext | guardrail | `common-guardrails` §Never, `ops` §Secrets | 🟢 stable |
+| [secrets-no-plaintext](secrets-no-plaintext/index.md) | guardrail | `common-guardrails` §Never, `ops` §Secrets | 🟢 stable |
 | external-api-adapter-boundary | guardrail | `03-design-patterns` §The seven patterns, `web` §Patterns to keep | 🟡 experimental |
 | no-live-external-in-tests | guardrail | `04-testing-verification` §Live DB never mutated, `common-guardrails` §Never | 🟢 stable |
-| adr-per-major-decision | workflow | `03-design-patterns` §The seven patterns, `REQUIREMENTS_AI.template` | 🟡 experimental |
+| [adr-per-major-decision](adr-per-major-decision/index.md) | workflow | `03-design-patterns` §The seven patterns, `REQUIREMENTS_AI.template` | 🟡 experimental |
 
 `no-live-external-in-tests` supersedes the sketched `no-live-db-in-tests`
 scope — it covers any external system, the live DB included.
@@ -154,10 +160,10 @@ introduced to the body-shape spec.
 
 | Module | Type | Source rule adapted from | Status |
 |---|---|---|---|
-| assumptions-before-code | guardrail | Karpathy guidelines §"Think before coding" | 🟡 experimental |
+| [assumptions-before-code](assumptions-before-code/index.md) | guardrail | Karpathy guidelines §"Think before coding" | 🟡 experimental |
 | [minimum-code-first](minimum-code-first/index.md) | guardrail | Karpathy guidelines §"Simplicity first" | 🟡 experimental |
-| surgical-diffs-only | guardrail | Karpathy guidelines §"Surgical changes" | 🟡 experimental |
-| [verifiable-goal-before-code](verifiable-goal-before-code/index.md) | workflow | Karpathy guidelines §"Goal-driven execution" (front half; smoke-before-commit + no-live-external-in-tests already own the verify half) | 🟡 experimental |
+| [surgical-diffs-only](surgical-diffs-only/index.md) | guardrail | Karpathy guidelines §"Surgical changes" | 🟡 experimental |
+| [verifiable-goal-before-code](verifiable-goal-before-code/index.md) | workflow | Karpathy guidelines §"Goal-driven execution" (front half; [smoke-before-commit](smoke-before-commit/index.md) + no-live-external-in-tests already own the verify half) | 🟡 experimental |
 
 ### Extraction tail (roadmap/10 A4)
 
@@ -174,8 +180,52 @@ codify the doc/tracking conventions a fresh repo composes early.
 |---|---|---|---|
 | [substrate-preflight](substrate-preflight/index.md) | prompt | [../prompts/substrate-preflight.md](../prompts/substrate-preflight.md), [../skills/substrate-preflight/SKILL.md](../skills/substrate-preflight/SKILL.md) | 🟢 stable · skill auto-pairs via `module:` |
 | [tight-code-review](tight-code-review/index.md) | prompt | [../prompts/tight-code-review.md](../prompts/tight-code-review.md), [../skills/tight-review/SKILL.md](../skills/tight-review/SKILL.md) | 🟡 experimental · skill auto-pairs via `module:` |
-| docs-two-layer | guardrail | `01-documentation-stack`, `playbook` §2 | 🟢 stable |
-| status-emoji-discipline | guardrail | `02-workflow-patterns` §4, `playbook` §1.4.1 | 🟢 stable |
+| [docs-two-layer](docs-two-layer/index.md) | guardrail | `01-documentation-stack`, `playbook` §2 | 🟢 stable |
+| [status-emoji-discipline](status-emoji-discipline/index.md) | guardrail | `02-workflow-patterns` §4, `playbook` §1.4.1 | 🟢 stable |
+
+### Context slimming (roadmap/12 S6)
+
+The map-not-territory pattern, extracted at
+`12-progressive-disclosure-context-slimming`
+S6 after being executed (S1–S4, eager chain 403 → 225 lines) and
+measured (H5). Ships `experimental` under a logged operator override:
+H5's outcome primary held (incidents *fell* in both measured repos)
+while its mechanism primary was refuted — bare pointers largely don't
+get read — which is exactly the caveat the module's rule carries.
+Promotion past `experimental` waits on the trigger-strengthening
+re-measure named in the
+H5 RESULT §4.
+The strengthening itself landed 2026-08-01 (the module's
+`pre_pr_wrapup_nudge.py` for both repos' wrap-up classes; a path-scoped
+`.claude/rules/` pointer at `docs/agent-conventions.md` in
+content_manager) — the re-measure window can open once both are merged.
+
+| Module | Type | Source rule extracted from | Status |
+|---|---|---|---|
+| [claude-md-as-map](claude-md-as-map/index.md) | guardrail | `12-progressive-disclosure-context-slimming` §2–§4, H5 RESULT | 🟡 experimental |
+
+### Teaching (roadmap/13 S1)
+
+The tutor stance for learning repos — hosts where the agent's job is
+to *teach*, not produce — per
+`13-teaching-agent-framework`.
+Domain-general by design: no module mentions any subject;
+learner-owned paths and the domain's oracle are host-adapter content
+in the host's own `CLAUDE.md`. Runtime surface: the
+tutor and hint
+skills (auto-pairing via `module:`) over
+`tutor-kickoff` and
+`hint-ladder`. All
+`experimental` (external evidence base, no own-case-study yet — the
+Karpathy-family precedent); each ships `## This rule is working if`
+transcript-checkable markers, and the `BOTTOM-OUT:` marker makes the
+answer-leak rate grep-able. First host: rust_book (S2).
+
+| Module | Type | Source rule adapted from | Status |
+|---|---|---|---|
+| guide-dont-solve | guardrail | rust_book's division-of-labor rule, generalized; Bastani et al. RCT + LearnLM/Study Mode convergence (`roadmap/13` §2–§4) | 🟡 experimental |
+| grounded-explanations | guardrail | learning-science core (concreteness fading, structure mapping, PS2 Pal) via `roadmap/13` §2/§4 | 🟡 experimental |
+| hint-ladder | workflow | ITS hint taxonomy + assistance dilemma ([Koedinger & Aleven 2007](https://pact.cs.cmu.edu/pubs/Koedinger%20Aleven%2007.pdf)) via `roadmap/13` §2/§4 | 🟡 experimental |
 
 ### Pending extraction
 

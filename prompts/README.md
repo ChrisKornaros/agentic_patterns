@@ -20,6 +20,8 @@ your session.
 | Asking the agent not to scope-creep | [scope-guard.md](scope-guard.md) |
 | You don't fully follow a change the agent made | [explain-back.md](explain-back.md) |
 | Debugging — before any fix | [minimal-repro.md](minimal-repro.md) |
+| Starting a learning session (agent as tutor, not producer) | `tutor-kickoff` |
+| Stuck on a practice problem — asking for a hint, not the answer | `hint-ladder` |
 
 ## Conventions
 

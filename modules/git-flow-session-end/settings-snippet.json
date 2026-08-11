@@ -1,5 +1,5 @@
 {
-  "_comment": "Portable Stop-hook snippet for the git-flow-session-end module. Merge the `hooks.Stop` entry below into a host repo's .claude/settings.json (append to the existing Stop array if one is present). It runs session_end_guard.py — the runtime half of this module — which nudges the agent back onto the session-end loop when it tries to end a turn with a MERGED PR un-cleaned-up or an OPEN PR at the hand-off point. The `[ -f ] || exit 0` guard makes it a safe no-op until you vendor this module (which ships session_end_guard.py under modules/git-flow-session-end/), so the snippet is safe to paste before the script exists. The guard FAILS OPEN and honors stop_hook_active, so it can never loop or wedge a session. Disable for one session with SESSION_END_GUARD_DISABLED=1. Path assumes modules are vendored under $CLAUDE_PROJECT_DIR/modules/ (the VENDORING.md convention); adjust if your host vendors elsewhere. See the companion index.md 'Enforcement' section for the prose.",
+  "_comment": "Portable hook snippets for the git-flow-session-end module. Merge the `hooks` entries below into a host repo's .claude/settings.json (append to existing arrays if present). Stop: session_end_guard.py nudges the agent back onto the session-end loop when it tries to end a turn with a MERGED PR un-cleaned-up or an OPEN PR at the hand-off point (disable: SESSION_END_GUARD_DISABLED=1). PreToolUse: pre_pr_wrapup_nudge.py injects a one-time non-blocking additionalContext reminder when a `gh pr create` fires with no wrap-up surface loaded this session — the H5 trigger-strengthening follow-up (disable: WRAPUP_NUDGE_DISABLED=1). Both scripts ship with this module; the `[ -f ] || exit 0` guards make each entry a safe no-op until you vendor it, so the snippet is safe to paste before the scripts exist. Both FAIL OPEN (the Stop guard also honors stop_hook_active), so they can never loop or wedge a session. Paths assume modules are vendored under $CLAUDE_PROJECT_DIR/modules/ (the VENDORING.md convention); adjust if your host vendors elsewhere. See the companion index.md 'Enforcement' section for the prose.",
   "hooks": {
     "Stop": [
       {
@@ -8,6 +8,17 @@
           {
             "type": "command",
             "command": "sh -c 'f=\"$CLAUDE_PROJECT_DIR/modules/git-flow-session-end/session_end_guard.py\"; [ -f \"$f\" ] || exit 0; exec python3 \"$f\"'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'f=\"$CLAUDE_PROJECT_DIR/modules/git-flow-session-end/pre_pr_wrapup_nudge.py\"; [ -f \"$f\" ] || exit 0; exec python3 \"$f\"'"
           }
         ]
       }

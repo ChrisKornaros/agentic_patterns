@@ -18,11 +18,27 @@ prompts/session-start.md
 prompts/session-wrapup.md
 prompts/phase-kickoff.md
 
+# Git workflow
+modules/git-flow-no-direct-main
+modules/git-flow-branch-naming
+modules/auto-commit-on-branch-done
+modules/ask-merged-via-popup
+
 # Guardrails
 modules/substrate-preflight
 modules/tight-code-review
 modules/minimum-code-first
 modules/verifiable-goal-before-code
+modules/secrets-no-plaintext
+modules/assumptions-before-code
+modules/surgical-diffs-only
+modules/smoke-before-commit
+modules/status-emoji-discipline
+
+# Documentation & decision structure
+modules/adr-per-major-decision
+modules/claude-md-as-map
+modules/docs-two-layer
 skills/scope-guard
 skills/substrate-preflight
 skills/tight-review
