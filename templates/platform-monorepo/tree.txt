@@ -1,0 +1,21 @@
+platform-repo/
+├── README.md                 # human landing: what this repo is, where things live
+├── AGENTS.md                 # agent contract — a map, kept to one screen
+├── CONVENTIONS.md            # ledger: vendored-from pin + rule-level deviations
+├── docs/                     # cross-area docs (published to the wiki by CI, if any)
+│   ├── adr/                  # ADR-NNNN-<slug>.md, one per locked decision
+│   ├── conventions/          # adapted rule texts (vendored; see CONVENTIONS.md)
+│   │   ├── vendor-manifest.txt
+│   │   └── prompts/          # paste-able agent prompts (kickoff, wrapup, review, …)
+│   ├── runbooks/             # operational how-tos
+│   └── next-session.md       # committed cross-session hand-off
+├── scripts/
+│   ├── vendor-conventions.sh # vendor / re-vendor + provenance maintenance
+│   └── check_docs_links.sh   # the repo's "build" — CI gate on every PR
+├── <ci config>               # link check on PR; docs→wiki publish on default-branch merge
+├── area-a/                   # one directory per business area — not greenfield;
+│   ├── README.md             #   holds migrated work with the standard layered on top
+│   ├── AGENTS.md             # optional: deltas only, defer to root
+│   ├── docs/
+│   └── src/
+└── area-b/                   # … same shape …

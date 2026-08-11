@@ -1,0 +1,24 @@
+# Conventions to vendor from agentic_patterns/modules/, one name per
+# line. Read by scripts/vendor-conventions.sh; comments and blank lines
+# are ignored.
+#
+# Deliberately absent (substitutions recorded in CONVENTIONS.md):
+#   ask-merged-via-popup, auto-commit-on-branch-done
+
+# Day one
+git-flow-no-direct-main
+git-flow-branch-naming
+secrets-no-plaintext
+assumptions-before-code
+minimum-code-first
+surgical-diffs-only
+verifiable-goal-before-code
+smoke-before-commit
+claude-md-as-map
+docs-two-layer
+
+# Tier 2 (first month) — uncomment when adopting:
+# git-flow-session-end
+# session-handoff
+# adr-per-major-decision
+# status-emoji-discipline
