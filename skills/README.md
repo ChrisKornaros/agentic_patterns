@@ -63,6 +63,8 @@ prose — that stays single-homed in `prompts/`. This matches the Hermes
 | [explain-back](explain-back/SKILL.md) | `/explain-back` | [prompts/explain-back.md](../prompts/explain-back.md) | — |
 | [minimal-repro](minimal-repro/SKILL.md) | `/minimal-repro` | [prompts/minimal-repro.md](../prompts/minimal-repro.md) | — |
 | plane-board-ops | — | `CONVENTIONS` | — (sources a tool doc, not a prompt) |
+| tutor | `/tutor` | `tutor-kickoff` | guide-dont-solve |
+| hint | `/hint` | `hint-ladder` | hint-ladder |
 
 The `session-wrapup`, `session-start`, and `phase-kickoff` skills shim
 modules that already exist; `substrate-preflight` and `tight-review` now
