@@ -53,3 +53,6 @@ skills/constraint-check
 prompts/minimal-repro.md
 prompts/explain-back.md
 prompts/constraint-check.md
+
+# Templates
+templates/platform-monorepo
