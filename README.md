@@ -13,6 +13,7 @@ exercised in real projects before being published.
 | `skills/` | Agent skills (slash commands) — packaged workflows an agent follows verbatim |
 | `prompts/` | Standalone prompt documents behind the skills, usable without the skill wrapper |
 | `templates/` | Project scaffolding for common project shapes |
+| `experiments/` | Curated example outputs from the source repo's experiments — pre-registered designs, blinded-rating artifacts, result stats |
 | `scripts/` | This repo's own tooling — the publish pipeline that produces everything above |
 
 Directories appear as content is published; the table describes the
