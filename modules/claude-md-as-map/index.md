@@ -2,12 +2,13 @@
 name: claude-md-as-map
 type: guardrail
 scope: repo
-lifecycle: experimental
+lifecycle: stable
 dependencies: []
 evidence:
   - 12-progressive-disclosure-context-slimming.md
   - RESULT.md
   - RESULT.md
+  - 2026-08-20-h5-remeasure/README.md
 applies_when:
   - the host has always-loaded agent context (CLAUDE.md / AGENTS.md chain) that has grown past ~200 lines, or is being written fresh
 version: 1
@@ -54,6 +55,13 @@ source repo:
   H1's finding
   (a passive pointer produced zero adoption until a hook surfaced it)
   recurring at the map level.
+- Confirmation, one iteration later: strengthening the two failing
+  classes with a tier-1 hook lifted follow rates 40%→67% and 33%→91%
+  (2026-08-20 re-measure)
+  — before/after evidence for the trigger-strength ladder at both
+  ends. The one class still low sat behind a rules file that mostly
+  never injected on the host clone: a trigger you don't verify as
+  *deployed* is a bare link with extra steps.
 
 ## How to apply
 

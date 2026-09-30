@@ -24,7 +24,7 @@ repo's "build." The structure derives from
 | [CONVENTIONS.template.md](CONVENTIONS.template.md) | The provenance ledger — source pin line + rule-level deviations only (wording adaptation is expected, not logged) |
 | [docs/conventions/vendor-manifest.txt](docs/conventions/vendor-manifest.txt) | Which conventions to vendor; read by the vendor script. Ships with the day-one set; Tier-2 entries commented out |
 | [scripts/vendor-conventions.sh](scripts/vendor-conventions.sh) | Vendors/re-vendors convention texts + prompts from an `agentic_patterns` clone, stamps provenance headers, refreshes the ledger pin, audits dependencies |
-| [scripts/check_docs_links.sh](scripts/check_docs_links.sh) | The verifier: every relative markdown link resolves. Wire into CI on every PR |
+| [scripts/check_docs_links.sh](scripts/check_docs_links.sh) | The verifier: every relative markdown link resolves, and every `#heading` anchor names a real heading (GitHub slug rules; `--no-anchors` for a host that slugs differently). Needs bash 3.2+ and perl. Wire into CI on every PR |
 | [tree.txt](tree.txt) | Recommended directory layout |
 
 ## How to use

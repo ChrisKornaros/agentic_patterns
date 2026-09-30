@@ -81,5 +81,5 @@ there.
 ## Verify
 
 `scripts/check_docs_links.sh` — every relative markdown link must
-resolve; CI runs it on every PR. The docs→{{WIKI}} publish runs on
+resolve, `#heading` anchors included; CI runs it on every PR. The docs→{{WIKI}} publish runs on
 merge to the default branch only.
