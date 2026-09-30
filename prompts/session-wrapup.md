@@ -16,9 +16,8 @@ git add -A                          # includes .claude/next-session.md
 git commit -m "<scoped message>"
 git push -u origin <branch>
 gh pr create --title "..." --body "..."
-# Then, in the same response, AskUserQuestion with post-merge
-# options ("Sync + start next phase", "Sync only — stop here",
-# "Not yet").
+# Then, in the same response, AskUserQuestion — "Merged" /
+# "Not yet" / "Changes requested / closed without merge".
 ```
 
 No "ready to commit?" turn. The status emoji in
@@ -27,21 +26,19 @@ not a follow-up chore PR — and so does the next-session handoff.
 
 ## B. Post-merge (sync sequence)
 
-If the entry was the AskUserQuestion popup answer ("Merged"), no
-verification needed — proceed:
-
-```
-git switch main && git pull --ff-only && git branch -d <branch> && git fetch --prune
-```
-
-If the entry was a free-text claim ("I merged it") in a later
-turn, verify first:
+Verify first — always, whether the entry was the popup answer
+("Merged") or a free-text claim ("I merged it"):
 
 ```
 gh pr view <N> --json state,mergedAt
 ```
 
 If `state != "MERGED"`, say so briefly and re-prompt — don't sync.
+Only on `state == "MERGED"`:
+
+```
+git switch main && git pull --ff-only && git branch -d <branch> && git fetch --prune
+```
 
 ## C. After the sync — the checklist
 

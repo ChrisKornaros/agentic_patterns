@@ -4,7 +4,7 @@ Portable instruction modules — frontmatter-tagged markdown files
 that any host repo can vendor into its `CLAUDE.md` (or per-role
 `CLAUDE.md`) without copy-pasting rule text.
 
-> **Status:** 🟡 partial. 30 modules extracted —
+> **Status:** 🟡 partial. 31 modules extracted (one deprecated) —
 > the v1 pilot covered one of each shape (`guardrail`, `workflow`,
 > `prompt`), the tech-stack-defaults umbrella from
 > `06-tech-stack-defaults`
@@ -40,7 +40,9 @@ that any host repo can vendor into its `CLAUDE.md` (or per-role
 > guardrail for the eager CLAUDE.md chain, and
 > `13-teaching-agent-framework` S1 adds the
 > teaching family (`guide-dont-solve`, `grounded-explanations`,
-> `hint-ladder`) — the tutor stance for learning repos.
+> `hint-ladder`) — the tutor stance for learning repos. 2026-08-28:
+> `deploy-target-arch` supersedes `arm64-target-arch` (the library's
+> first tombstone deprecation — the move off the Raspberry Pi inverted the rule).
 > The full backlog and migration plan live in
 > `03-instruction-modules` §5.
 
@@ -72,7 +74,8 @@ agent runtime instead of relearned every project.
 |---|---|---|---|
 | python-uv-only | guardrail | `ops`, `playbook` | 🟢 stable |
 | duckdb-default-store | guardrail | `storage` §Default: DuckDB | 🟢 stable |
-| arm64-target-arch | gotcha | `ops`, `tools-stack/README` | 🟢 stable |
+| deploy-target-arch | gotcha | the prod host's README, its vendored ops copy (it replaced the Pi-era skill that first carried the supersession note) | 🟢 stable |
+| arm64-target-arch | gotcha | — (evidence dropped on deprecation) | ⚫ deprecated 2026-08-28 → superseded by `deploy-target-arch` (the move off the Pi inverted the rule) |
 
 ### Scope-of-action
 
@@ -136,7 +139,7 @@ existing one ahead of a published case study.
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
 | [secrets-no-plaintext](secrets-no-plaintext/index.md) | guardrail | `common-guardrails` §Never, `ops` §Secrets | 🟢 stable |
-| external-api-adapter-boundary | guardrail | `03-design-patterns` §The seven patterns, `web` §Patterns to keep | 🟡 experimental |
+| external-api-adapter-boundary | guardrail | `03-design-patterns` §The seven patterns, `web` §Patterns to keep, `roadmap/14` §3 (v2: verify against the vendor) | 🟡 experimental |
 | no-live-external-in-tests | guardrail | `04-testing-verification` §Live DB never mutated, `common-guardrails` §Never | 🟢 stable |
 | [adr-per-major-decision](adr-per-major-decision/index.md) | workflow | `03-design-patterns` §The seven patterns, `REQUIREMENTS_AI.template` | 🟡 experimental |
 
@@ -188,21 +191,23 @@ codify the doc/tracking conventions a fresh repo composes early.
 The map-not-territory pattern, extracted at
 `12-progressive-disclosure-context-slimming`
 S6 after being executed (S1–S4, eager chain 403 → 225 lines) and
-measured (H5). Ships `experimental` under a logged operator override:
+measured (H5). Shipped `experimental` under a logged operator override:
 H5's outcome primary held (incidents *fell* in both measured repos)
 while its mechanism primary was refuted — bare pointers largely don't
 get read — which is exactly the caveat the module's rule carries.
-Promotion past `experimental` waits on the trigger-strengthening
+Promotion past `experimental` waited on the trigger-strengthening
 re-measure named in the
 H5 RESULT §4.
-The strengthening itself landed 2026-08-01 (the module's
+The strengthening itself landed 2026-08-01 (the
+[git-flow-session-end](git-flow-session-end/index.md) module's
 `pre_pr_wrapup_nudge.py` for both repos' wrap-up classes; a path-scoped
 `.claude/rules/` pointer at `docs/agent-conventions.md` in
-content_manager) — the re-measure window can open once both are merged.
+content_manager), and the 2026-08-20 re-measure promoted the module to
+`stable` (row below).
 
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
-| [claude-md-as-map](claude-md-as-map/index.md) | guardrail | `12-progressive-disclosure-context-slimming` §2–§4, H5 RESULT | 🟡 experimental |
+| [claude-md-as-map](claude-md-as-map/index.md) | guardrail | `12-progressive-disclosure-context-slimming` §2–§4, H5 RESULT §6, 2026-08-20 re-measure | 🟢 stable · promoted 2026-08-20 on the §4 re-measure (hook-strengthened classes 40%→67%, 33%→91%) |
 
 ### Teaching (roadmap/13 S1)
 
@@ -231,9 +236,9 @@ answer-leak rate grep-able. First host: rust_book (S2).
 
 The remaining candidates are the **role modules** — still scattered
 across `agents` role definitions; they'll be extracted in
-follow-up branches as the multi-agent team firms up (the `po/` flesh-out
-in `10-fable-window-finalization` A2 is the
-next forcing case). See
+follow-up branches as the multi-agent team firms up (the `po/` flesh-out,
+`10-fable-window-finalization` A2, finished
+2026-06-11 without extracting one). See
 `08-pre-content-manager-optimization` §4-A1
 for the `content_manager`-relevant history.
 

@@ -9,6 +9,7 @@ your session.
 
 | Moment | Prompt |
 |---|---|
+| Opening a session — sync, read the handoff, plan before code | [session-start.md](session-start.md) |
 | Starting work on a phase | [phase-kickoff.md](phase-kickoff.md) |
 | Ending a session that shipped something | [session-wrapup.md](session-wrapup.md) |
 | Reviewing a diff or PR | [tight-code-review.md](tight-code-review.md) |

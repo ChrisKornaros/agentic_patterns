@@ -24,7 +24,7 @@ one directory per skill, each holding a single `SKILL.md`.
   that field, and standalone skills are vendored with `--skill <name>`.
   This is C1 part 2, now live — see
   `VENDORING` §9.
-- **Chris's own machine.** The two highest-value skills are also
+- **Chris's own machine.** The three highest-value skills are also
   wired as live `/`-commands in
   `commands` —
   `scope-guard`, `session-wrapup`, and its read-side mirror
