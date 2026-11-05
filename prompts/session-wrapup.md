@@ -12,7 +12,7 @@ next-session kickoff (§D-1) so it rides this PR, then:
 
 ```
 # Overwrite .claude/next-session.md with the roadmap-grounded kickoff (§D-1).
-git add -A                          # includes .claude/next-session.md
+git add -A                          # includes .claude/next-session.md (not in a public host)
 git commit -m "<scoped message>"
 git push -u origin <branch>
 gh pr create --title "..." --body "..."
@@ -71,7 +71,9 @@ git loop deliberately leaves both out:
    ~40 lines; link the roadmap section rather than restating it** — it is
    injected verbatim into the next session's opening context (full rule in
    the module). Write it before `git add` so it rides this PR (the commit
-   then says what shipped *and* what's next).
+   then says what shipped *and* what's next). A public host keeps it out
+   of the PR, as a gitignored symlink into a private store
+   ([module](../modules/session-handoff/index.md#public-hosts-keep-the-kickoff-private)).
 2. **Memory triage — *after* the sync, before the Session end block.** Sort
    what was learned: *project-specific* → the per-project memory store;
    *transferable* (a workflow, a recurring failure mode, a "we work better

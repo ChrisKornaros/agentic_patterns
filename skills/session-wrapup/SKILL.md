@@ -1,7 +1,7 @@
 ---
 name: session-wrapup
 description: "Runs the end-of-branch / post-merge wrap-up — auto-commit + PR, the merge popup, verify-before-sync, the CLAUDE.md / memory catch-up, and the session handoff (cross-project lesson capture + next-session kickoff). Use when finishing a branch or closing out a working session. Shims the git-flow-session-end + session-handoff modules."
-version: 1.2.0
+version: 1.3.0
 source: prompts/session-wrapup.md
 module: git-flow-session-end
 tags: [workflow, agentic-optimization-research]
@@ -22,7 +22,7 @@ emit, see D-1) into `.claude/next-session.md` so it rides this PR, then:
 
 ```
 # Overwrite .claude/next-session.md with the roadmap-grounded kickoff (D-1).
-git add -A                          # includes .claude/next-session.md
+git add -A                          # includes .claude/next-session.md (not in a public host)
 git commit -m "<scoped message>"   # status emoji flips 🔴→🟢 INSIDE this PR
 git push -u origin <branch>
 gh pr create --title "..." --body "...<Delivered + Verified footer>"
@@ -66,7 +66,9 @@ branch, the steps, what to run, open questions. **Cap it at ~40 lines;
 link the roadmap section instead of restating it** (the file is injected
 verbatim at next session start — module has the full rule). If nothing's
 queued, say "pick from the roadmap" — never invent direction. Write it
-before `git add` so it lands in this PR.
+before `git add` so it lands in this PR. **Public host:** the file is a
+gitignored symlink into a private store, so it stays out of the PR
+([module](../../modules/session-handoff/index.md#public-hosts-keep-the-kickoff-private)).
 
 **D-2. Memory triage — *after* the sync, before the Session end block.**
 Project-specific state → that project's per-project memory store.

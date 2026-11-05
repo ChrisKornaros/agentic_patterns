@@ -30,7 +30,9 @@ verified, the agent's next response runs, in one turn:
 
 1. sync the project's tracking docs to reality (human-readable
    requirements/roadmap/bug docs *and* the AI-facing
-   `CLAUDE.md` status lines)
+   `CLAUDE.md` status lines), and write the next-session
+   kickoff to `.claude/next-session.md` in the same diff, so
+   the hand-off rides this PR
 2. commit → push → `gh pr create`
 3. pop the merge question via `AskUserQuestion`
 
@@ -94,9 +96,11 @@ passing, acceptance criteria observable), execute these steps
    If the host vendors [[session-handoff]], its **kickoff emit**
    (`.claude/next-session.md`) is written *here too*, alongside the
    doc-sync — so the next-session handoff is `git add`ed into the same
-   commit and rides this PR, not left as a stray change on `main`. (The
-   memory-triage half of that module runs *after* the merge; see step
-   6.)
+   commit and rides this PR, not left as a stray change on `main`. A
+   public host keeps it untracked instead
+   ([session-handoff § public hosts](../session-handoff/index.md#public-hosts-keep-the-kickoff-private)).
+   (The memory-triage half of that module runs *after* the merge; see
+   step 6.)
 2. **Commit + push + open PR in one response.** `git add` →
    `git commit` → `git push -u origin <branch>` →
    `gh pr create` with title, body, and the

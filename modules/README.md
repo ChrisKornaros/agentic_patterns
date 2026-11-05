@@ -50,8 +50,8 @@ that any host repo can vendor into its `CLAUDE.md` (or per-role
 
 | Path | Purpose |
 |---|---|
-| `frontmatter` | Field-by-field reference for the module frontmatter. Authoritative spec text lives in `03-instruction-modules`; this file is the short reference. |
-| `VENDORING` | Step-by-step recipe for adopting one or more of these modules in a host repo — `MODULES.md` ledger, host `CLAUDE.md` shape, permission-settings, update flow. |
+| [_spec/frontmatter.md](_spec/frontmatter.md) | Field-by-field reference for the module frontmatter. Authoritative spec text lives in `03-instruction-modules`; this file is the short reference. |
+| [VENDORING.md](VENDORING.md) | Step-by-step recipe for adopting one or more of these modules in a host repo — `MODULES.md` ledger, host `CLAUDE.md` shape, permission-settings, update flow. |
 | `<name>/index.md` | One module per directory. Directory layout leaves room for companion files (settings snippets, examples) as types grow. |
 
 ## Modules in this repo
@@ -72,7 +72,7 @@ agent runtime instead of relearned every project.
 
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
-| python-uv-only | guardrail | `ops`, `playbook` | 🟢 stable |
+| python-uv-only | guardrail | `ops`, `playbook` | 🟢 stable · v2 ships a deny `settings-snippet.json` (installs outside `uv.lock`, pipx/poetry/pdm, non-uv venvs) |
 | duckdb-default-store | guardrail | `storage` §Default: DuckDB | 🟢 stable |
 | deploy-target-arch | gotcha | the prod host's README, its vendored ops copy (it replaced the Pi-era skill that first carried the supersession note) | 🟢 stable |
 | arm64-target-arch | gotcha | — (evidence dropped on deprecation) | ⚫ deprecated 2026-08-28 → superseded by `deploy-target-arch` (the move off the Pi inverted the rule) |
@@ -88,8 +88,8 @@ host in a state nobody reviewed.
 
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
-| stay-in-project-tree | guardrail | `common-guardrails` §Never ("Reach outside the repo's working tree"), `settings` deny-list | 🟢 stable |
-| no-sudo-as-shortcut | guardrail | `common-guardrails` §Never ("Reach for `sudo` as a shortcut"), `07-anti-patterns` #13, `settings` deny-list | 🟢 stable |
+| [stay-in-project-tree](stay-in-project-tree/index.md) | guardrail | `common-guardrails` §Never ("Reach outside the repo's working tree"), `settings` deny-list | 🟢 stable |
+| [no-sudo-as-shortcut](no-sudo-as-shortcut/index.md) | guardrail | `common-guardrails` §Never ("Reach for `sudo` as a shortcut"), `07-anti-patterns` #13, `settings` deny-list | 🟢 stable |
 
 ### File-access surface
 
@@ -100,7 +100,7 @@ prose guardrail closing the Bash-cat workaround the hook can't see.
 
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
-| no-cat-head-via-bash | guardrail | `2026-05-27-pre-obsidian/README` baseline (~25% of Bash spend), root CLAUDE.md "Avoid using this tool to run `cat`/`head`/..." guidance | 🟡 experimental |
+| [no-cat-head-via-bash](no-cat-head-via-bash/index.md) | guardrail | `2026-05-27-pre-obsidian/README` baseline (~25% of Bash spend), root CLAUDE.md "Avoid using this tool to run `cat`/`head`/..." guidance | 🟡 experimental |
 
 ### Day-to-day git-flow
 
@@ -122,7 +122,7 @@ next-session kickoff).
 | [smoke-before-commit](smoke-before-commit/index.md) | guardrail | `04-testing-verification` | 🟢 stable |
 | [auto-commit-on-branch-done](auto-commit-on-branch-done/index.md) | workflow | `common-guardrails` §Always | 🟢 stable |
 | [ask-merged-via-popup](ask-merged-via-popup/index.md) | workflow | `common-guardrails` §Always, `git-workflow` §The session-end loop | 🟢 stable |
-| [session-handoff](session-handoff/index.md) | workflow | `playbook/README` §Quick-reference card (#8, #10), [prompts/phase-kickoff.md](../prompts/phase-kickoff.md), `lessons-log` | 🟢 stable · runs *after* `git-flow-session-end`: cross-project lesson capture into `knowledge` + roadmap-grounded `.claude/next-session.md` |
+| [session-handoff](session-handoff/index.md) | workflow | `playbook/README` §Quick-reference card (#8, #10), [prompts/phase-kickoff.md](../prompts/phase-kickoff.md), `lessons-log` | 🟢 stable · runs *after* `git-flow-session-end`: cross-project lesson capture into `knowledge` + roadmap-grounded `.claude/next-session.md` (kept private in a public host, v4) |
 
 ### Project-integration
 
@@ -139,8 +139,8 @@ existing one ahead of a published case study.
 | Module | Type | Source rule extracted from | Status |
 |---|---|---|---|
 | [secrets-no-plaintext](secrets-no-plaintext/index.md) | guardrail | `common-guardrails` §Never, `ops` §Secrets | 🟢 stable |
-| external-api-adapter-boundary | guardrail | `03-design-patterns` §The seven patterns, `web` §Patterns to keep, `roadmap/14` §3 (v2: verify against the vendor) | 🟡 experimental |
-| no-live-external-in-tests | guardrail | `04-testing-verification` §Live DB never mutated, `common-guardrails` §Never | 🟢 stable |
+| [external-api-adapter-boundary](external-api-adapter-boundary/index.md) | guardrail | `03-design-patterns` §The seven patterns, `web` §Patterns to keep, `roadmap/14` §3 (v2: verify against the vendor) | 🟡 experimental |
+| [no-live-external-in-tests](no-live-external-in-tests/index.md) | guardrail | `04-testing-verification` §Live DB never mutated, `common-guardrails` §Never | 🟢 stable |
 | [adr-per-major-decision](adr-per-major-decision/index.md) | workflow | `03-design-patterns` §The seven patterns, `REQUIREMENTS_AI.template` | 🟡 experimental |
 
 `no-live-external-in-tests` supersedes the sketched `no-live-db-in-tests`
@@ -159,14 +159,14 @@ the library's first external-source modules, hence all
 adjacent PR-boundary angle (what else gets *packaged*); these four
 cover the inside-the-diff discipline. Each ships the
 `## This rule is working if` success-marker section this family
-introduced to the body-shape spec.
+introduced to the [body-shape spec](_spec/frontmatter.md#body-shape).
 
 | Module | Type | Source rule adapted from | Status |
 |---|---|---|---|
 | [assumptions-before-code](assumptions-before-code/index.md) | guardrail | Karpathy guidelines §"Think before coding" | 🟡 experimental |
 | [minimum-code-first](minimum-code-first/index.md) | guardrail | Karpathy guidelines §"Simplicity first" | 🟡 experimental |
 | [surgical-diffs-only](surgical-diffs-only/index.md) | guardrail | Karpathy guidelines §"Surgical changes" | 🟡 experimental |
-| [verifiable-goal-before-code](verifiable-goal-before-code/index.md) | workflow | Karpathy guidelines §"Goal-driven execution" (front half; [smoke-before-commit](smoke-before-commit/index.md) + no-live-external-in-tests already own the verify half) | 🟡 experimental |
+| [verifiable-goal-before-code](verifiable-goal-before-code/index.md) | workflow | Karpathy guidelines §"Goal-driven execution" (front half; [smoke-before-commit](smoke-before-commit/index.md) + [no-live-external-in-tests](no-live-external-in-tests/index.md) already own the verify half) | 🟡 experimental |
 
 ### Extraction tail (roadmap/10 A4)
 
@@ -175,7 +175,7 @@ A4 row called out — extracted together so the Fable window opened with
 the library's pending tail closed. The two `prompt` modules were already
 shipping as skills sourcing `prompts/` directly; extracting them lets
 each skill declare a `module:` and **auto-pair** in
-`install-modules`, retiring
+[../scripts/install-modules.sh](../scripts/install-modules.sh), retiring
 the intentional skill-first/module-later half-state. The two guardrails
 codify the doc/tracking conventions a fresh repo composes early.
 
@@ -289,7 +289,7 @@ There's no compiler yet (per spec §2 non-goals). Manual checks:
 - Every `dependencies:` entry points to a module that exists in
   this directory.
 
-`check_modules` asserts all
+[../scripts/check_modules.sh](../scripts/check_modules.sh) asserts all
 of these (including the `stable ⇒ evidence:` rule) and exits non-zero
 on any violation — run it alongside `check_links.sh`.
 

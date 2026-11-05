@@ -1,0 +1,13 @@
+{
+  "_comment": "Vendoring contract for install-modules.sh --tool / bootstrap. The script copies this tool to <host>/.claude/tools/search-docs/, substitutes __DIR__ with that host-relative path, and emits the `server` block as a ready-to-merge entry for the host's root .mcp.json. The server KEY (search_docs) and entrypoint (search-docs-server) are canonical here so the script stays tool-agnostic; do not rename the key — the tool surfaces in the warehouse as mcp__search_docs__search and the H1/H2 analyses key on it.",
+  "server_key": "search_docs",
+  "server": {
+    "command": "uv",
+    "args": [
+      "--directory",
+      "__DIR__",
+      "run",
+      "search-docs-server"
+    ]
+  }
+}

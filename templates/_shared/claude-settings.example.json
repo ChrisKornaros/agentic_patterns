@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment_purpose": "Example .claude/settings.json — a starting point. Each template ships its own tailored copy; this is the default an application template adapts from. See templates/application/PERMISSIONS.md for the rationale behind each entry. Three layers: (1) allow = day-to-day autonomy (gh, uv, python, pytest, feature-branch git, jq, duckdb, sqlite3); (2) ask = anything that mutates a remote or destroys local state; (3) deny = anything outside the project root, anything destructive to main, and PR merging (you merge manually in the GitHub UI so the human stays in the loop). The end-of-session flow lives in templates/_shared/git-workflow.md.",
+  "permissions": {
+    "allow": [
+      "Read",
+      "Edit",
+      "Write",
+
+      "Bash(ls:*)",
+      "Bash(find . :*)",
+      "Bash(find .:*)",
+      "Bash(rg:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+      "Bash(awk:*)",
+      "Bash(sed -n:*)",
+      "Bash(jq:*)",
+      "Bash(tree:*)",
+      "Bash(mkdir:*)",
+      "Bash(touch:*)",
+
+      "Bash(uv:*)",
+      "Bash(uv run:*)",
+      "Bash(uv pip:*)",
+      "Bash(uv sync:*)",
+      "Bash(uv add:*)",
+      "Bash(uv lock:*)",
+      "Bash(pip list:*)",
+      "Bash(pip show:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(pytest:*)",
+
+      "Bash(duckdb:*)",
+      "Bash(sqlite3:*)",
+
+      "Bash(bash scripts/smoke.sh)",
+      "Bash(./scripts/smoke.sh)",
+      "Bash(scripts/smoke.sh)",
+
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git ls-files:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git switch:*)",
+      "Bash(git checkout -b:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull --ff-only:*)",
+      "Bash(git pull:*)",
+      "Bash(git branch -d:*)",
+      "Bash(git remote -v)",
+      "Bash(git remote show:*)",
+
+      "Bash(gh pr create:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr status:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh repo view:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git tag:*)",
+      "Bash(git branch -D:*)",
+      "Bash(rm:*)",
+      "Bash(mv:*)",
+      "Bash(cp:*)",
+      "Bash(uv pip uninstall:*)",
+      "Bash(deploy/*)",
+      "Bash(bash deploy/*)",
+      "Bash(docker:*)",
+      "Bash(docker compose:*)",
+      "Bash(gh release:*)",
+      "Bash(gh workflow run:*)"
+    ],
+    "deny": [
+      "Bash(sudo:*)",
+      "Bash(su:*)",
+      "Bash(chown:*)",
+      "Bash(chmod 777:*)",
+
+      "Bash(cd /)",
+      "Bash(cd /:*)",
+      "Bash(cd /etc:*)",
+      "Bash(cd /usr:*)",
+      "Bash(cd /var:*)",
+      "Bash(cd /opt:*)",
+      "Bash(cd /System:*)",
+      "Bash(cd /Library:*)",
+      "Bash(cd /private:*)",
+
+      "Read(//etc/**)",
+      "Read(//private/etc/**)",
+      "Read(//var/**)",
+      "Read(//usr/**)",
+      "Read(//System/**)",
+      "Read(//Library/**)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.config/gh/**)",
+      "Edit(//etc/**)",
+      "Edit(//private/etc/**)",
+      "Edit(//var/**)",
+      "Edit(//usr/**)",
+      "Edit(//System/**)",
+      "Edit(//Library/**)",
+      "Edit(~/.ssh/**)",
+      "Edit(~/.aws/**)",
+
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /:*)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf ~/)",
+      "Bash(rm -rf ~/*)",
+
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push --force-with-lease:*)",
+      "Bash(git push origin main:*)",
+      "Bash(git push origin main)",
+      "Bash(git push * main)",
+      "Bash(git push * main *)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean -f:*)",
+      "Bash(git clean -fd:*)",
+      "Bash(git checkout main)",
+      "Bash(git checkout -- :*)",
+      "Bash(git commit --amend:*)",
+
+      "Bash(gh pr merge:*)",
+      "Bash(gh repo delete:*)",
+      "Bash(gh auth logout:*)",
+
+      "Bash(curl -X POST:*)",
+      "Bash(curl -X DELETE:*)",
+      "Bash(curl -X PUT:*)"
+    ]
+  },
+  "_comment_hooks": "The PreToolUse hook below is the runtime half of the no-cat-head-via-bash module (the H2 re-read guard): it blocks a redundant re-read of a file already read and unmodified this session. It's guarded with a `[ -f ] || exit 0` test, so it's a safe no-op until you vendor that module (which ships pre_read_guard.py) — delete the hook block if you don't want it. The module is the Read-tool half; the prose rule is the Bash-cat half, which is why `cat`/`head`/`tail` stay in the allow list (cat-of-command-output is a legitimate exception, so it's a behavioral rule, not a deny). Disable the guard for one session with H2_REREAD_GUARD_DISABLED=1. Other hook ideas (e.g. a PreToolUse hook that reminds 'backup before migration' on schema-changing SQL) belong here too — see templates/application/PERMISSIONS.md.",
+  "_comment_stop": "The Stop hook below is the runtime half of the git-flow-session-end module: it nudges the agent back onto the session-end loop when it tries to end a turn with a MERGED PR un-cleaned-up or a clean+pushed OPEN PR at the hand-off point (the #1 dropped step — ending in prose instead of popping the AskUserQuestion merge popup). Same `[ -f ] || exit 0` guard, so it's a safe no-op until you vendor that module (which ships session_end_guard.py). It fails open and honors stop_hook_active, so it can never loop or wedge a session. Disable for one session with SESSION_END_GUARD_DISABLED=1. Delete the block if your repo doesn't follow GitHub Flow.",
+  "_comment_sessionstart": "The SessionStart hook below is the runtime half of the session-handoff module: it surfaces a committed .claude/next-session.md (the roadmap-grounded kickoff the previous session wrote) into the new session's opening context, so the *read* side of the handoff is mechanical rather than agent-honored. Same `[ -f ] || exit 0` guard, so it's a safe no-op until you vendor that module (which ships session_handoff_kickoff.py); the script also no-ops when no next-session.md exists and FAILS OPEN on any error, so it can never wedge a session. Disable for one session with SESSION_HANDOFF_KICKOFF_DISABLED=1. Delete the block if you don't want the handoff auto-surfaced.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'f=\"$CLAUDE_PROJECT_DIR/modules/session-handoff/session_handoff_kickoff.py\"; [ -f \"$f\" ] || exit 0; exec python3 \"$f\"'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'f=\"$CLAUDE_PROJECT_DIR/modules/no-cat-head-via-bash/pre_read_guard.py\"; [ -f \"$f\" ] || exit 0; exec python3 \"$f\"'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'f=\"$CLAUDE_PROJECT_DIR/modules/git-flow-session-end/session_end_guard.py\"; [ -f \"$f\" ] || exit 0; exec python3 \"$f\"'"
+          }
+        ]
+      }
+    ]
+  }
+}

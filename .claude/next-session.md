@@ -1,37 +1,45 @@
-# Next session — steady state, allowlist growth on demand
+# Next session — the shelf's tooling is exported; steady state again
 
-> Updated 2026-07-15 after the follow-ups session. This repo is
+> Updated 2026-11-05 (`chore/export-shelf-tooling`). This repo is
 > PUBLIC — keep every committed file (including this one) free of
 > private-repo specifics.
 
 ## State as of this handoff
 
-All queued post-pipeline follow-ups are closed:
-
-- **Repo contract** — `CLAUDE.md` added (PR #3): native-vs-exported
-  boundary, publish rules, branch + PR + merge-popup workflow.
-- **Denylist backed up privately** (PR in the source repo). The local
-  `.publish-denylist` header says where; sync the backup after editing
-  the local file.
-- **Cosmetic path leak fixed sanitizer-side** (PR #4). The handoff had
-  assumed bare paths in source prose; diagnosis showed the source was
-  fully linked and the leaks were sanitizer artifacts — kept link
-  labels embedding paths, plus frontmatter `evidence:` lists that
-  can't hold links. `scripts/publish.sh` now collapses path tokens in
-  kept labels and reduces frontmatter paths to `basename#anchor`.
-  Verified with a full publish run (sync @ source `d14ced1`).
+- **The export now carries the vendoring chain's tooling** (sync @
+  source `e5ef4c6`): `scripts/install-modules.sh`, `check_links.sh`,
+  `check_modules.sh`; `modules/VENDORING.md` and `modules/_spec/`;
+  `tools/` (search-docs, headless-runner, clew, library-catalog);
+  the maintenance-sweep / lens-review / agent-ready-issue /
+  tool-trial-sandbox skills and prompts, the bootstrap and
+  retrofit-audit prompts; the example settings and the explanation
+  template; five more guardrail modules. 24 modules in all.
+- **`scripts/` is now mixed:** `publish.sh`, the allowlist and
+  `check_links.ignore` are native; the three scripts above are
+  exported. `CLAUDE.md` says which is which.
+- **Verified from a fresh clone of this branch:** `install-modules.sh
+  --dry-run` plans a module, a standalone skill and the search-docs
+  tool with no missing path; a real install writes ledgers whose
+  "pulled from" line names this repo (the script derives it from the
+  clone's `origin`); `check_modules.sh` passes on the 24 modules;
+  `check_links.sh` passes with `experiments/**` ignored (its example
+  output links against the source tree by design).
+- **Only tools with an `mcp-entry.json` vendor by `--tool`** (today:
+  search-docs). The runner, the Clew and the catalog run from the
+  library checkout itself, which is how the downstream pattern uses
+  them.
 
 ## Queued next
 
-Nothing is queued. This repo is demand-driven from here:
+Nothing is queued. Demand-driven, as before:
 
-1. **Allowlist growth** — when a blog post needs a bundle, add it to
-   `scripts/publish-allowlist.txt` and re-run `scripts/publish.sh`.
-2. **(Only if it ever bothers)** backticked code-span paths in source
-   prose still ship verbatim — they're intentional module content, so
-   any change is an upstream editorial call, not a sanitizer fix.
+1. **Allowlist growth** on demand: add to
+   `scripts/publish-allowlist.txt`, re-run `scripts/publish.sh`, then
+   run both check scripts here before opening the PR.
+2. **The source repo's template work** (its roadmap/16 unit 3) will
+   arrive as a later sync of `templates/`.
 
 ## Conventions
 
-See `CLAUDE.md` (added this session). Publishing is always
-`scripts/publish.sh` — never hand-copy content.
+See `CLAUDE.md`. Publishing is always `scripts/publish.sh` — never
+hand-copy content.

@@ -1,0 +1,27 @@
+#!/bin/sh
+# Clew: append "Clew: <session-id>" when a Claude Code session commits.
+#
+# Installed into a repo's hooks directory by tools/clew/install.sh (the
+# vendored copy lives in agentic_optimization_research/tools/clew/).
+# Claude Code sets CLAUDE_CODE_SESSION_ID in every Bash command a session
+# runs, so a commit made from a session gets the trailer and a commit
+# made by hand leaves this hook silent. Read it back with:
+#
+#   git log --format='%h %(trailers:key=Clew,valueonly)'
+#
+# A hook that was already here when Clew was installed runs first, as
+# prepare-commit-msg.pre-clew. Named for the ball of thread Ariadne gave
+# Theseus: the way back from a commit to the session that made it.
+set -u
+
+pre="$0.pre-clew"
+if [ -x "$pre" ]; then
+    "$pre" "$@" || exit $?
+fi
+
+sid="${CLAUDE_CODE_SESSION_ID:-}"
+[ -n "$sid" ] || exit 0
+
+msg_file="$1"
+git interpret-trailers --in-place --if-exists replace \
+    --trailer "Clew: $sid" "$msg_file"

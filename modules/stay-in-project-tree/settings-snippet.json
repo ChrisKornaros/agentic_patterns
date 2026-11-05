@@ -1,0 +1,52 @@
+{
+  "_comment": "Portable deny-list snippet for the stay-in-project-tree module. Paste these entries into the `permissions.deny` array of a host repo's .claude/settings.json. Path anchors matter: in Read/Edit/Write rules Claude Code reads `//path` as filesystem-absolute, `~/path` as home-relative (resolves per machine, no username needed), and a single leading `/path` as relative to the settings source (the project, for project settings), so `Read(/etc/**)` would deny `<repo>/etc/**` and block nothing. Keep system directories on `//` and credential stores on `~/`. The snippet covers system directories, credential stores, shell rc files, and the global Claude config; it intentionally does NOT block /tmp (some tools legitimately write there) or the per-project ~/.claude/projects/<hash>/ dir (Claude Code scopes that to this project by design). See the companion index.md for the prose rule.",
+  "permissions": {
+    "deny": [
+      "Bash(cd /)",
+      "Bash(cd /:*)",
+      "Bash(cd /etc:*)",
+      "Bash(cd /usr:*)",
+      "Bash(cd /var:*)",
+      "Bash(cd /opt:*)",
+      "Bash(cd /System:*)",
+      "Bash(cd /Library:*)",
+      "Bash(cd /private:*)",
+      "Bash(cd ~/.ssh:*)",
+
+      "Read(//etc/**)",
+      "Read(//private/etc/**)",
+      "Read(//var/**)",
+      "Read(//usr/**)",
+      "Read(//System/**)",
+      "Read(//Library/**)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.config/gh/**)",
+      "Read(~/.gnupg/**)",
+
+      "Edit(//etc/**)",
+      "Edit(//private/etc/**)",
+      "Edit(//var/**)",
+      "Edit(//usr/**)",
+      "Edit(//System/**)",
+      "Edit(//Library/**)",
+      "Edit(~/.ssh/**)",
+      "Edit(~/.aws/**)",
+      "Edit(~/.gitconfig)",
+      "Edit(~/.zshrc)",
+      "Edit(~/.bashrc)",
+      "Edit(~/.bash_profile)",
+      "Edit(~/.profile)",
+      "Edit(~/.claude/settings.json)",
+      "Edit(~/.claude/commands/**)",
+
+
+      "Bash(crontab:*)",
+      "Bash(launchctl:*)",
+      "Bash(systemctl:*)",
+      "Bash(ssh:*)",
+      "Bash(scp:*)",
+      "Bash(rsync:*)"
+    ]
+  }
+}

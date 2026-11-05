@@ -15,7 +15,7 @@ one directory per skill, each holding a single `SKILL.md`.
 ## The reader
 
 - **A future host repo's bootstrap.** `/bootstrap-repo` (via
-  `install-modules`)
+  [../scripts/install-modules.sh](../scripts/install-modules.sh))
   vendors a chosen skill into the host's
   `.claude/skills/<name>/SKILL.md` alongside the canonical module it
   shims (so a `prompt`-type module never lands without its runnable
@@ -23,7 +23,7 @@ one directory per skill, each holding a single `SKILL.md`.
   frontmatter (`module: <name>`); the install script auto-pairs on
   that field, and standalone skills are vendored with `--skill <name>`.
   This is C1 part 2, now live — see
-  `VENDORING` §9.
+  [../modules/VENDORING.md §9](../modules/VENDORING.md#9-vendor-the-paired-skills).
 - **Chris's own machine.** The three highest-value skills are also
   wired as live `/`-commands in
   `commands` —
@@ -65,6 +65,10 @@ prose — that stays single-homed in `prompts/`. This matches the Hermes
 | plane-board-ops | — | `CONVENTIONS` | — (sources a tool doc, not a prompt) |
 | tutor | `/tutor` | `tutor-kickoff` | guide-dont-solve |
 | hint | `/hint` | `hint-ladder` | hint-ladder |
+| [lens-review](lens-review/SKILL.md) | `/lens-review` | [prompts/lens-review.md](../prompts/lens-review.md) | — |
+| [maintenance-sweep](maintenance-sweep/SKILL.md) | `/maintenance-sweep` | [prompts/maintenance-sweep.md](../prompts/maintenance-sweep.md) | — |
+| [agent-ready-issue](agent-ready-issue/SKILL.md) | `/agent-ready-issue` | [prompts/agent-ready-issue.md](../prompts/agent-ready-issue.md) | — |
+| [tool-trial-sandbox](tool-trial-sandbox/SKILL.md) | `/tool-trial-sandbox` | [prompts/tool-trial-sandbox.md](../prompts/tool-trial-sandbox.md) | — |
 
 The `session-wrapup`, `session-start`, and `phase-kickoff` skills shim
 modules that already exist; `substrate-preflight` and `tight-review` now
