@@ -49,6 +49,15 @@ of hand-rolling curl loops.
   races a live writer.
 - **Treat a non-green result as blocking.** Fix the failure, re-run,
   *then* proceed to the [[auto-commit-on-branch-done]] sequence.
+- **Docs-only PRs run it too.** The verifier is the same whether the
+  diff touched code or prose; what changes is what it catches (a code
+  sample that no longer runs, a path a `CLAUDE.md` line names that no
+  longer exists, a template string a doc quotes) and what it costs
+  (the script's runtime: 71 s for 839 tests on a docs-only
+  content_manager PR, 2026-11-04). A host whose `CLAUDE.md` names a
+  cheaper docs verifier (a link check, a module-frontmatter check) runs
+  that *as well*, not instead. "Skipped, docs only" is the second
+  anti-pattern below with a different excuse.
 - **Pre-flight any side-channel the smoke owns** — a fixed port, a
   file lock, a daemon thread — and fail with a *named* error, not a
   downstream "connection refused" that looks like a route

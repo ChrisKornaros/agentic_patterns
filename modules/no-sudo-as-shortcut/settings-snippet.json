@@ -1,0 +1,29 @@
+{
+  "_comment": "Portable deny-list snippet for the no-sudo-as-shortcut module. Paste these entries into the `permissions.deny` array of a host repo's .claude/settings.json. Covers sudo, su, chown, chmod 777, and the most common sudo-equivalent container/k8s escalations. If the project has a PERMISSIONS.md entry that genuinely requires one of these (e.g., a `deploy/install-*.sh` that must run with elevation), the human runs that command themselves outside the agent's tool surface — the deny list is intentional. Pairs with stay-in-project-tree's settings-snippet.json; they're the scope-of-action guardrail family. See the companion index.md for the prose rule.",
+  "permissions": {
+    "deny": [
+      "Bash(sudo:*)",
+      "Bash(sudo *)",
+      "Bash(su:*)",
+      "Bash(su -:*)",
+      "Bash(chown:*)",
+      "Bash(chmod 777:*)",
+      "Bash(chmod -R 777:*)",
+
+      "Bash(docker exec --user 0:*)",
+      "Bash(docker exec -u 0:*)",
+      "Bash(docker exec --user root:*)",
+      "Bash(docker run --user 0:*)",
+      "Bash(docker run -u 0:*)",
+      "Bash(docker run --privileged:*)",
+
+      "Bash(kubectl exec * --as=*)",
+      "Bash(kubectl exec * --user=root*)",
+
+      "Bash(visudo:*)",
+      "Bash(usermod:*)",
+      "Bash(groupmod:*)",
+      "Bash(passwd:*)"
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+[project]
+name = "search_docs"
+version = "0.2.0"
+description = "BM25 retrieval over a repo's markdown — vendorable MCP doc-search server."
+requires-python = ">=3.10"
+dependencies = [
+  "rank-bm25>=0.2.2",
+  "mcp>=1.0.0",
+]
+
+[project.scripts]
+search-docs = "search_docs.__main__:main"
+search-docs-server = "search_docs.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["search_docs"]

@@ -7,7 +7,8 @@ roadmap), and runs an orient → plan → confirm loop **before any code**.
 
 This is the *read* side of the [session-handoff](../modules/session-handoff/index.md)
 loop made into a deliberate action. The wrap-up writes
-`.claude/next-session.md` into the feature-branch PR; this picks it up.
+`.claude/next-session.md` into the feature-branch PR (on a public host,
+into a private store the file links to); this picks it up.
 
 ## The loop
 
@@ -26,10 +27,15 @@ ask whether to resume it or stash/branch fresh.
 
 ### 2. Read the handoff
 
-- If ``next-session`` exists, read
-  it first. (A `SessionStart` hook may have already surfaced it into
-  context — read it deliberately anyway; the file is the source, the hook
-  injection is a convenience.)
+- If `.claude/next-session.md` exists, read it first. (A `SessionStart`
+  hook may have already surfaced it into context — read it deliberately
+  anyway; the file is the source, the hook injection is a convenience.)
+- If git ignores the file (`git check-ignore -q .claude/next-session.md`),
+  the host is public and keeps it in a private store behind a symlink
+  ([session-handoff §Public hosts](../modules/session-handoff/index.md#public-hosts-keep-the-kickoff-private)).
+  The hook stays silent when that link is missing, so check: if the file
+  is absent, or `ls -l` shows no `->`, say so before falling back. The
+  machine isn't linked yet, or an older checkout replaced the link.
 - If it's **absent or empty of direction**, fall back to the host's
   roadmap / version-planning doc and pick the next unit from there.
 - The handoff is a *distillation written while context was warm*, not law.
@@ -61,7 +67,7 @@ Once the plan is confirmed, `git switch -c <feat|docs|chore>/<slug>`
 The single biggest waste in agent work is **re-deriving state** at the
 start of a session ([session-handoff](../modules/session-handoff/index.md)
 §Why). The wrap-up loop already collapses that cost by persisting a
-roadmap-grounded handoff into the PR; `/session-start` is the matching
+roadmap-grounded handoff; `/session-start` is the matching
 read action so the cost is actually *collected* rather than paid again.
 
 It's distinct from the passive `SessionStart` hook on purpose. The hook

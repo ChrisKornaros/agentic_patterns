@@ -12,7 +12,7 @@ evidence:
 applies_when:
   - host follows the git-flow-session-end loop
   - work spans multiple sessions and/or multiple projects
-version: 3
+version: 4
 ---
 
 # Session handoff — knowledge capture + next-session kickoff
@@ -27,7 +27,9 @@ each output lands in the right place:
    next-session prompt to `.claude/next-session.md`, *then* `git add` it
    alongside the doc-sync so it rides the **feature branch's PR** (the
    same diff the merge popup confirms). The commit then says both what
-   shipped *and* what's next.
+   shipped *and* what's next. In a **public** host the file stays out
+   of the PR instead — see
+   [Public hosts](#public-hosts-keep-the-kickoff-private).
 2. **Memory triage — *after* the merge sync.** Decide what was learned
    this session and route it: *project-specific* state → the per-project
    memory store; *transferable* lessons → the cross-project
@@ -78,7 +80,8 @@ produced it, and only swept up incidentally by the *next* session's
 first PR.) Memory triage stays after the merge precisely because it has
 no feature-branch artifact: it proposes per-project memory (a separate,
 human-gated store) and — in this repo — appends to `knowledge/`, neither
-of which belongs in the code PR.
+of which belongs in the code PR. A public host trades that record away
+for privacy ([below](#public-hosts-keep-the-kickoff-private)).
 
 ## How to apply
 
@@ -87,7 +90,7 @@ loop, on either side of the commit:
 
 | Step | When | Why there |
 |---|---|---|
-| **1. Kickoff emit** | *Before* the commit — with the doc-sync (step 1 of [[git-flow-session-end]]), so it's `git add`ed into the feature branch and rides the PR | It produces a tracked file; that file belongs in the same diff as the work |
+| **1. Kickoff emit** | *Before* the commit — with the doc-sync (step 1 of [[git-flow-session-end]]), so it's `git add`ed into the feature branch and rides the PR | It produces a tracked file; that file belongs in the same diff as the work (a public host's stays untracked — [below](#public-hosts-keep-the-kickoff-private)) |
 | **2. Memory triage** | *After* the merge is verified and `main` synced (steps 4–5), **before** the Session end summary | It's human-gated and writes to stores outside the code PR |
 
 ### 1. Kickoff emit → `.claude/next-session.md` (before the commit)
@@ -140,6 +143,43 @@ the kickoff is part of the PR, not a stray change left on `main`.
 The next session reads this file first (host `CLAUDE.md` convention, or
 the optional companion hook below).
 
+#### Public hosts: keep the kickoff private
+
+A committed kickoff is as public as the repo: it names what's next, and
+often private repos, hosts and people with it. Once a host is public
+(or about to be), keep the file out of the tree:
+
+1. **Gitignore it:** `/.claude/next-session.md`.
+2. **Keep the real file in a private store that syncs between
+   machines.** On Chris's machines that's the project's memory store,
+   `~/vault/claude/memory/<project>/next-session.md`, which the vault's
+   hooks commit and sync.
+3. **Link it once per machine:**
+   `ln -s <relative path to the store>/next-session.md .claude/next-session.md`.
+   The companion hook and `/session-start` read through the link
+   unchanged.
+4. **Emit as before, minus the `git add`.** The write still happens
+   before the commit; the file just doesn't ride the PR.
+5. **Fail on a tracked copy** if the host has a public-content test, so
+   a `git add -f` can't slip one back in.
+6. **Record it as a local override** in the host's `MODULES.md` row.
+
+Watch-outs:
+
+- **Checking out an older branch replaces the link.** A branch from
+  before the switch still tracks the file, so the checkout writes a real
+  file over the link, and switching back to `main` deletes it. Re-link
+  after the post-merge sync; `ls -l .claude/next-session.md` should show
+  `-> …`.
+- **Going private doesn't scrub history.** Every earlier version stays
+  in the public log; removing them is a history rewrite, a separate call.
+- **A machine without the link starts cold.** The hook no-ops when the
+  file is absent, so nothing warns you.
+
+Evidence: agentic_administration went public on 2026-10-27 and moved its
+kickoff the next day (its PR #51;
+lessons-log).
+
 ### 2. Memory triage (after the merge sync)
 
 Reflect on the session and sort what's worth keeping:
@@ -188,12 +228,12 @@ increasing order of agency:
 | File | Role |
 |---|---|
 | [`session_handoff_kickoff.py`](session_handoff_kickoff.py) | The `SessionStart` hook — reads the payload on stdin and injects `.claude/next-session.md` via `hookSpecificOutput.additionalContext`. No-ops when the file is absent; fails open. |
-| [`settings-snippet.json`](settings-snippet.json) | Paste-ready `hooks.SessionStart` entry that runs the hook, guarded with `[ -f ] || exit 0` so it's a safe no-op until the module is vendored. Merge into the host's `.claude/settings.json` (VENDORING.md §6). |
+| [`settings-snippet.json`](settings-snippet.json) | Paste-ready `hooks.SessionStart` entry that runs the hook, guarded with `[ -f ] || exit 0` so it's a safe no-op until the module is vendored. Merge into the host's `.claude/settings.json` ([VENDORING.md §6](../VENDORING.md#6-inherit-the-matching-permission-settings-and-hooks)). |
 
-Vendoring this module via ``install-modules``
+Vendoring this module via [`scripts/install-modules.sh`](../../scripts/install-modules.sh)
 `cp -R`s both files in and the run notice points back here to wire the
 hook — and the Mode-B example settings
-(`claude-settings.example.json`)
+([`claude-settings.example.json`](../../templates/_shared/claude-settings.example.json))
 already pre-wires the `SessionStart` block, so `/bootstrap-repo` auto-wires
 it. On Chris's own machines the hook is wired **user-globally** in
 ``settings``
@@ -212,6 +252,9 @@ every repo with this module vendored.
 - **Appending the kickoff to the chat Session end block instead of the
   file.** That's the scroll-away failure [[git-flow-session-end]] bans;
   the persisted file is the whole point.
+- **Committing the kickoff in a public repo.** It publishes the plan
+  and whatever it names;
+  [keep it private](#public-hosts-keep-the-kickoff-private).
 - **Dumping project-specific state into `knowledge/`.** It pollutes the
   cross-project inbox. Project state belongs in per-project memory.
 - **Saving a "how Chris works" lesson without proposing it first.**
