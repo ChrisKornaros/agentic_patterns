@@ -11,10 +11,12 @@ and private infra (hostnames, addresses, ports, key names).
 ## What's native vs exported
 
 - **Native (editable here):** `README.md`, `LICENSE`, `CLAUDE.md`,
-  `.gitignore`, `scripts/` (the publish pipeline + committed
-  allowlist), `.claude/` (the session handoff).
+  `.gitignore`, the publish pipeline in `scripts/` (`publish.sh` +
+  the committed allowlist), `.claude/` (the session handoff).
 - **Exported (never edit here):** `modules/`, `skills/`, `prompts/`,
-  `templates/`. Changes land in the private source repo and arrive via
+  `templates/`, `tools/`, and in `scripts/` the
+  vendoring and check scripts (`install-modules.sh`,
+  `check_links.sh`, `check_modules.sh`). Changes land in the private source repo and arrive via
   the next publish run. A hand edit here is silently overwritten — and
   a hand-copied file skips the sanitizer and deny gate.
 

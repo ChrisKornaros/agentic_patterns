@@ -56,3 +56,39 @@ prompts/constraint-check.md
 
 # Templates
 templates/platform-monorepo
+
+# The shelf's tooling (roadmap/16 unit 2, 2026-11-05): what a downstream
+# meta-repo needs to vendor from this mirror and install into its own
+# repos. Scripts land beside the publish pipeline in scripts/; the
+# publish pipeline itself stays native to this repo.
+scripts/install-modules.sh
+scripts/check_links.sh
+scripts/check_modules.sh
+modules/VENDORING.md
+modules/_spec
+tools/README.md
+tools/headless-runner
+tools/clew
+tools/library-catalog
+tools/search-docs
+templates/_shared/claude-settings.example.json
+templates/_shared/explanation.template.md
+
+# Factory-side skills + prompts
+skills/maintenance-sweep
+skills/lens-review
+skills/agent-ready-issue
+skills/tool-trial-sandbox
+prompts/maintenance-sweep.md
+prompts/lens-review.md
+prompts/agent-ready-issue.md
+prompts/tool-trial-sandbox.md
+prompts/bootstrap-host-repo.md
+prompts/retrofit-audit.md
+
+# Guardrails, second batch
+modules/external-api-adapter-boundary
+modules/no-live-external-in-tests
+modules/stay-in-project-tree
+modules/no-sudo-as-shortcut
+modules/no-cat-head-via-bash
