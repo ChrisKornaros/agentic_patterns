@@ -1,18 +1,26 @@
 platform-repo/
 ├── README.md                 # human landing: what this repo is, where things live
-├── AGENTS.md                 # agent contract — a map, kept to one screen
-├── CONVENTIONS.md            # ledger: vendored-from pin + rule-level deviations
+├── AGENTS.md                 # agent contract — a map, kept to one screen; canonical for every agent
+├── CLAUDE.md                 # runtime layer: one line, @AGENTS.md (inert without a seat)
+├── CONVENTIONS.md            # ledger: vendored-from pin + rule-level deviations (the texts)
+├── MODULES.md · SKILLS.md    # runtime layer: hop-3 ledgers, written by install-modules.sh
+├── modules/                  # runtime layer: installed modules — the enforcement half (hook scripts, snippets)
+├── .claude/
+│   ├── settings.json         # runtime layer: permissions + the hook enforcers modules ship
+│   ├── skills/<name>/        # runtime layer: skills installed from the meta-repo (in SKILLS.md)
+│   │                         #   beside the repo's own area skills, <area>-<name>/ (not in it)
+│   └── next-session.md       # committed cross-session hand-off, both routes
 ├── docs/                     # cross-area docs (published to the wiki by CI, if any)
 │   ├── adr/                  # ADR-NNNN-<slug>.md, one per locked decision
-│   ├── conventions/          # adapted rule texts (vendored; see CONVENTIONS.md)
+│   ├── conventions/          # adapted rule texts (vendored; see CONVENTIONS.md) — what everyone reads
 │   │   ├── vendor-manifest.txt
 │   │   └── prompts/          # paste-able agent prompts (kickoff, wrapup, review, …)
-│   ├── runbooks/             # operational how-tos
-│   └── next-session.md       # committed cross-session hand-off
+│   └── runbooks/             # operational how-tos
 ├── scripts/
-│   ├── vendor-conventions.sh # vendor / re-vendor + provenance maintenance
-│   └── check_docs_links.sh   # the repo's "build" — CI gate on every PR
-├── <ci config>               # link check on PR; docs→wiki publish on default-branch merge
+│   ├── vendor-conventions.sh # vendor / re-vendor the texts + provenance maintenance
+│   ├── check_docs_links.sh   # links resolve — CI gate on every PR
+│   └── smoke.sh              # the gate: contract files, placeholders, links, each area's verify command
+├── <ci config>               # smoke.sh (which runs the link check) on PR; docs→wiki publish on default-branch merge
 ├── area-a/                   # one directory per business area — not greenfield;
 │   ├── README.md             #   holds migrated work with the standard layered on top
 │   ├── AGENTS.md             # optional: deltas only, defer to root

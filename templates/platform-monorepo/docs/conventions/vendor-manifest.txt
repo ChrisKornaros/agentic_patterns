@@ -4,6 +4,11 @@
 #
 # Deliberately absent (substitutions recorded in CONVENTIONS.md):
 #   ask-merged-via-popup, auto-commit-on-branch-done
+#
+# With a Claude Code seat, the same names go to the meta-repo's
+# install-modules.sh for the runtime layer (modules/ + MODULES.md), plus
+# the three whose hooks .claude/settings.json wires: session-handoff,
+# git-flow-session-end, no-cat-head-via-bash. See README.md.
 
 # Day one
 git-flow-no-direct-main
