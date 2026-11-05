@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment_purpose": "The runtime layer's permissions and hook enforcers for a platform monorepo, composed from the settings snippets the vendored modules ship. Each block names its source so a re-vendor is a diff: deny = git-flow-no-direct-main + git-flow-session-end (the trio VENDORING.md §6 bakes in), stay-in-project-tree/settings-snippet.json, no-sudo-as-shortcut/settings-snippet.json; hooks = session-handoff/settings-snippet.json, git-flow-session-end/settings-snippet.json, and the re-read guard block from templates/_shared/claude-settings.example.json (no-cat-head-via-bash). The allow list is this repo's own and is the factory's contract: a headless runner job passes it through, and anything left at ask is a refusal in a headless run. Lint right after any merge (VENDORING.md §6): run a fresh `claude -p \"read /etc/hostname\"` from the repo root and read its stderr for rules it could not parse, then trip one deny and see it refused. A seatless user needs none of this file; the platform layer (branch permissions, PR template, CI) enforces the same rules.",
+  "_comment_allow": "Day-to-day autonomy and the factory's contract. Read-only shell, the repo's two verifiers, feature-branch git, and a push of the agent's own branch (-u origin <branch>; the default branch is denied below, and deny wins). Add each business area's verify command from the Areas table in AGENTS.md as its own entry. No host CLI is assumed: on a host with one (gh, glab, ...), allow its read-only and pr-create forms here and deny its merge form below.",
+  "permissions": {
+    "allow": [
+      "Read",
+      "Edit",
+      "Write",
+
+      "Bash(ls:*)",
+      "Bash(find . :*)",
+      "Bash(find .:*)",
+      "Bash(rg:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+      "Bash(awk:*)",
+      "Bash(sed -n:*)",
+      "Bash(jq:*)",
+      "Bash(tree:*)",
+      "Bash(mkdir:*)",
+      "Bash(touch:*)",
+      "Bash(diff:*)",
+
+      "Bash(scripts/smoke.sh)",
+      "Bash(bash scripts/smoke.sh)",
+      "Bash(./scripts/smoke.sh)",
+      "Bash(scripts/check_docs_links.sh:*)",
+      "Bash(bash scripts/check_docs_links.sh:*)",
+      "Bash(./scripts/check_docs_links.sh:*)",
+
+      "Bash(git status)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git ls-files:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git switch:*)",
+      "Bash(git checkout -b:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull --ff-only:*)",
+      "Bash(git push -u origin:*)",
+      "Bash(git branch -d:*)",
+      "Bash(git remote -v)",
+      "Bash(git remote show:*)"
+    ],
+    "_comment_ask": "Anything that mutates a remote beyond the agent's own branch or destroys local state. In a headless run every one of these is a refusal, so a runner job must not need them.",
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git tag:*)",
+      "Bash(git branch -D:*)",
+      "Bash(rm:*)",
+      "Bash(mv:*)",
+      "Bash(cp:*)",
+      "Bash(docker:*)",
+      "Bash(docker compose:*)"
+    ],
+    "_comment_deny": "Three sources. (1) The git-flow deny trio from VENDORING.md §6: no push to the default branch, no force push, no merge from the agent; the human merges in the host's UI. Rename `main` if the default branch is called something else. (2) stay-in-project-tree/settings-snippet.json: nothing outside the project tree, no credential stores, no shell rc or global agent config, no remote shells or schedulers. (3) no-sudo-as-shortcut/settings-snippet.json: no elevation, no root inside containers. Re-vendor by replacing a block with the snippet's current deny array.",
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push --force-with-lease:*)",
+      "Bash(git push origin main:*)",
+      "Bash(git push origin main)",
+      "Bash(git push * main)",
+      "Bash(git push * main *)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean -f:*)",
+      "Bash(git clean -fd:*)",
+      "Bash(git checkout main)",
+      "Bash(git checkout -- :*)",
+      "Bash(git commit --amend:*)",
+
+      "Bash(cd /)",
+      "Bash(cd /:*)",
+      "Bash(cd /etc:*)",
+      "Bash(cd /usr:*)",
+      "Bash(cd /var:*)",
+      "Bash(cd /opt:*)",
+      "Bash(cd /System:*)",
+      "Bash(cd /Library:*)",
+      "Bash(cd /private:*)",
+      "Bash(cd ~/.ssh:*)",
+      "Read(//etc/**)",
+      "Read(//private/etc/**)",
+      "Read(//var/**)",
+      "Read(//usr/**)",
+      "Read(//System/**)",
+      "Read(//Library/**)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.config/gh/**)",
+      "Read(~/.gnupg/**)",
+      "Edit(//etc/**)",
+      "Edit(//private/etc/**)",
+      "Edit(//var/**)",
+      "Edit(//usr/**)",
+      "Edit(//System/**)",
+      "Edit(//Library/**)",
+      "Edit(~/.ssh/**)",
+      "Edit(~/.aws/**)",
+      "Edit(~/.gitconfig)",
+      "Edit(~/.zshrc)",
+      "Edit(~/.bashrc)",
+      "Edit(~/.bash_profile)",
+      "Edit(~/.profile)",
+      "Edit(~/.claude/settings.json)",
+      "Edit(~/.claude/commands/**)",
+      "Bash(crontab:*)",
+      "Bash(launchctl:*)",
+      "Bash(systemctl:*)",
+      "Bash(ssh:*)",
+      "Bash(scp:*)",
+      "Bash(rsync:*)",
+
+      "Bash(sudo:*)",
+      "Bash(sudo *)",
+      "Bash(su:*)",
+      "Bash(su -:*)",
+      "Bash(chown:*)",
+      "Bash(chmod 777:*)",
+      "Bash(chmod -R 777:*)",
+      "Bash(docker exec --user 0:*)",
+      "Bash(docker exec -u 0:*)",
+      "Bash(docker exec --user root:*)",
+      "Bash(docker run --user 0:*)",
+      "Bash(docker run -u 0:*)",
+      "Bash(docker run --privileged:*)",
+      "Bash(kubectl exec * --as=*)",
+      "Bash(kubectl exec * --user=root*)",
+      "Bash(visudo:*)",
+      "Bash(usermod:*)",
+      "Bash(groupmod:*)",
+      "Bash(passwd:*)"
+    ]
+  },
+  "_comment_hooks": "Each hook runs a script a vendored module ships under modules/<name>/ and is guarded with `[ -f ] || exit 0`, so every entry is a safe no-op until install-modules.sh brings that module from the meta-repo, and every script fails open. SessionStart (session-handoff): surfaces the committed .claude/next-session.md into the opening context; disable for one session with SESSION_HANDOFF_KICKOFF_DISABLED=1. Stop (git-flow-session-end): nudges the agent back onto the session-end loop when it ends a turn with a merged PR un-cleaned-up or an open PR at the hand-off point; SESSION_END_GUARD_DISABLED=1. PreToolUse on Bash (git-flow-session-end): a one-time reminder when a PR is created with no wrap-up surface loaded; it keys on `gh pr create` and is inert on a host without gh; WRAPUP_NUDGE_DISABLED=1. PreToolUse on Read|Edit|Write|MultiEdit (no-cat-head-via-bash): blocks a redundant re-read of an unmodified file; H2_REREAD_GUARD_DISABLED=1. Before pasting: if the seat holder's own ~/.claude/settings.json already wires one of these, leave that block out here and record why in MODULES.md's Override column, or the hook fires twice (VENDORING.md §6). A managed policy that forbids hooks: delete this block; enforcement stays with the platform layer.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'f=\"$CLAUDE_PROJECT_DIR/modules/session-handoff/session_handoff_kickoff.py\"; [ -f \"$f\" ] || exit 0; exec python3 \"$f\"'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'f=\"$CLAUDE_PROJECT_DIR/modules/git-flow-session-end/pre_pr_wrapup_nudge.py\"; [ -f \"$f\" ] || exit 0; exec python3 \"$f\"'"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'f=\"$CLAUDE_PROJECT_DIR/modules/no-cat-head-via-bash/pre_read_guard.py\"; [ -f \"$f\" ] || exit 0; exec python3 \"$f\"'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'f=\"$CLAUDE_PROJECT_DIR/modules/git-flow-session-end/session_end_guard.py\"; [ -f \"$f\" ] || exit 0; exec python3 \"$f\"'"
+          }
+        ]
+      }
+    ]
+  }
+}

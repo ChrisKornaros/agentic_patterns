@@ -10,7 +10,7 @@ created them — linkify as you instantiate. -->
 that agents work across all areas from this single contract. Area
 contracts carry deltas only.}}
 
-**Read `docs/next-session.md` first if it exists** — it is the hand-off
+**Read `.claude/next-session.md` first if it exists** — it is the hand-off
 from the previous session.
 
 ## Conventions
@@ -38,21 +38,21 @@ Load the file before acting in its area.
 are the always-loaded copy. If the canonical steps change, re-paste
 them here — a link alone gets ignored mid-task.)
 
-1. Read `docs/next-session.md` if present. Confirm the goal and how it
+1. Read `.claude/next-session.md` if present. Confirm the goal and how it
    will be verified before editing anything.
 2. Branch from the default branch:
    `feat|fix|docs|chore/{{JIRA_KEY}}-<nnn>-<slug>`. Never commit to it
    directly.
 3. State your assumptions and the verifiable goal; write the minimum
    code first; keep diffs surgical.
-4. Before every commit: run the touched area's verify command (see
-   Areas below) and `scripts/check_docs_links.sh` if docs changed.
+4. Before every commit: run `scripts/smoke.sh` — the link check plus
+   each area's verify command (see Areas below).
 5. Commit, push the branch, open a PR using the PR template, and fill
    in its session-summary section.
 6. A human merges in the {{PLATFORM}} UI. Never merge, and never push
    the default branch.
 7. After the merge: delete the branch and rewrite
-   `docs/next-session.md` with what the next session needs to know.
+   `.claude/next-session.md` with what the next session needs to know.
 
 ## Prompts
 
@@ -61,7 +61,7 @@ the agent at the named moment (a prompt that is never named here is
 never used):
 
 - `session-start.md` — open **every** session with it; it begins by
-  reading this file and `docs/next-session.md`
+  reading this file and `.claude/next-session.md`
 - `session-wrapup.md` — the end-of-session loop (step 5–7 above)
 - `scope-guard.md` — before coding anything with creep potential
 - `tight-code-review.md` — self-review before requesting review
@@ -71,15 +71,23 @@ See the folder for the full set.
 ## Areas
 
 Area contracts carry only deltas — never restate root rules here or
-there.
+there. `scripts/smoke.sh` reads this table: one row per area
+directory, and the verify command runs from the repo root.
 
 | Area | Contract | Verify command |
 |---|---|---|
 | `{{area-a}}/` | `{{area-a}}/AGENTS.md` | `{{command}}` |
 | `{{area-b}}/` | `{{area-b}}/AGENTS.md` | `{{command}}` |
 
+An area's own skill (with a Claude Code seat) is a directory under the
+root `.claude/skills/` named `<area>-<name>/`, listed in that area's
+contract, and absent from `SKILLS.md`, which lists installed skills
+only. It is promoted to the meta-repo when a second repo wants it.
+
 ## Verify
 
-`scripts/check_docs_links.sh` — every relative markdown link must
-resolve, `#heading` anchors included; CI runs it on every PR. The docs→{{WIKI}} publish runs on
-merge to the default branch only.
+`scripts/smoke.sh` — the contract files are instantiated with no
+placeholder left, every relative markdown link resolves (`#heading`
+anchors included, via `scripts/check_docs_links.sh`), and each area's
+verify command above passes; CI runs it on every PR. The
+docs→{{WIKI}} publish runs on merge to the default branch only.
