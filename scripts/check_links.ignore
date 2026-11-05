@@ -1,0 +1,12 @@
+# check_links.ignore — intentional exceptions for scripts/check_links.sh.
+# Native to this repo (the script itself is exported from the source repo;
+# this file is not). Format: one entry per line, either
+#   <source-glob>                  skip ALL relative links in matching files
+#   <source-glob><TAB><target-re>  skip links whose target matches, in those files
+# Every entry carries a comment saying why the exception is legitimate.
+
+# experiments/ holds curated example outputs copied from the source repo's
+# experiments, verbatim. Their links are written against the source repo's
+# tree (modules that are not exported here, memory files), so they resolve
+# there, not here. The example is evidence, not a page to maintain.
+experiments/**
