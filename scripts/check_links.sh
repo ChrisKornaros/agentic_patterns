@@ -202,7 +202,7 @@ while IFS= read -r file; do
             broken=$((broken + 1))
         fi
     done < <(extract_links "$file")
-done < <(git ls-files '*.md')
+done < <(git ls-files --cached --others --exclude-standard '*.md')
 
 echo
 if [[ $broken -eq 0 ]]; then

@@ -48,7 +48,7 @@ fi
 cd "$REPO_ROOT"
 
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    files=$(git ls-files '*.md')
+    files=$(git ls-files --cached --others --exclude-standard '*.md')  # new pages count before they are staged
 else
     files=$(find . -name '*.md' -not -path './.git/*' | sed 's|^\./||')
 fi

@@ -3,6 +3,7 @@ platform-repo/
 ├── AGENTS.md                 # agent contract — a map, kept to one screen; canonical for every agent
 ├── CLAUDE.md                 # runtime layer: one line, @AGENTS.md (inert without a seat)
 ├── CONVENTIONS.md            # ledger: vendored-from pin + rule-level deviations (the texts)
+├── .gitattributes            # LF pinned for scripts, hooks and config: Git Bash on Windows runs them too
 ├── MODULES.md · SKILLS.md    # runtime layer: hop-3 ledgers, written by install-modules.sh
 ├── modules/                  # runtime layer: installed modules — the enforcement half (hook scripts, snippets)
 ├── .claude/

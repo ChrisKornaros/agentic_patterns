@@ -1,0 +1,8 @@
+# Scripts and hooks run under Git Bash on Windows as well as on macOS and
+# Linux; a CRLF checkout breaks every one of them (roadmap/16 unit 4,
+# 2026-11-05). Pin LF for anything an interpreter reads.
+*.sh      text eol=lf
+*.py      text eol=lf
+*.json    text eol=lf
+*.toml    text eol=lf
+*.md      text eol=lf

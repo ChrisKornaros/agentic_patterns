@@ -135,8 +135,8 @@ TODAY=$(date +%Y-%m-%d)
 # vendored meta-repo running this script against its team repos) writes
 # ledgers that name itself, not this repo. Falls back to this repo when
 # there is no remote. The web-path shape (`tree/main`, `blob/main`) is
-# the one GitHub, GitLab and Gitea share; other hosts get a URL that
-# names the right repo with a path they will not serve.
+# the one GitHub, GitLab and Gitea share; other hosts get the plain repo
+# URL instead of a path they will not serve.
 _origin=$(cd "$CANONICAL_ROOT" && git remote get-url origin 2>/dev/null || true)
 case "$_origin" in
     git@*:*)   _origin="${_origin#git@}"; _origin="https://${_origin%%:*}/${_origin#*:}" ;;
@@ -149,8 +149,17 @@ else
     CANONICAL_WEB=https://github.com/ChrisKornaros/agentic_optimization_research
 fi
 CANONICAL_NAME=${CANONICAL_WEB##*/}
-CANONICAL_TREE=$CANONICAL_WEB/tree/main
-CANONICAL_BLOB=$CANONICAL_WEB/blob/main
+# Deep links (`tree/main`, `blob/main`) only on hosts known to serve that
+# shape; any other host gets the plain repo URL, which every host serves
+# (roadmap/16 D13: a Bitbucket meta-repo got `tree/main` links its host
+# would not resolve, 2026-11-05).
+case "${CANONICAL_WEB#https://}" in
+    github.com/*|gitlab.*|*.gitlab.*|codeberg.org/*|gitea.*|*.gitea.*)
+        CANONICAL_TREE=$CANONICAL_WEB/tree/main
+        CANONICAL_BLOB=$CANONICAL_WEB/blob/main ;;
+    *)  CANONICAL_TREE=$CANONICAL_WEB
+        CANONICAL_BLOB=$CANONICAL_WEB ;;
+esac
 
 # Ledger headers (everything up to and including the table separator).
 MODULES_HEADER='# Vendored modules

@@ -31,6 +31,7 @@ repo's "build." The structure derives from
 | [AGENTS.template.md](AGENTS.template.md) | The root agent contract — a one-screen map: conventions table, inline short-form workflow, named prompts, area pointers. Canonical for every agent and vendor |
 | [CLAUDE.md](CLAUDE.md) | The runtime layer's contract file: one `@AGENTS.md` include line so a Claude Code session loads the same contract. Inert without a seat |
 | [CONVENTIONS.template.md](CONVENTIONS.template.md) | The provenance ledger for the convention *texts* — source pin line + rule-level deviations only (wording adaptation is expected, not logged) |
+| [.gitattributes](.gitattributes) | Pins LF line endings for scripts, hooks and config files. A Windows checkout with `core.autocrlf` otherwise turns every `.sh` into a CRLF file that Git Bash cannot run |
 | [.claude/settings.json](.claude/settings.json) | The runtime layer's permissions and hook enforcers, composed block by block from the modules' settings snippets; each block names its source. The allow list is the factory's contract (below) |
 | [docs/conventions/vendor-manifest.txt](docs/conventions/vendor-manifest.txt) | Which conventions to vendor; read by the vendor script. Ships with the day-one set; Tier-2 entries commented out |
 | [scripts/vendor-conventions.sh](scripts/vendor-conventions.sh) | Vendors/re-vendors convention texts + prompts from an `agentic_patterns` clone, stamps provenance headers, refreshes the ledger pin, audits dependencies |
