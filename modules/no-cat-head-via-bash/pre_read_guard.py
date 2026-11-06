@@ -24,6 +24,15 @@ session has already read and not modified since. Edit/Write/MultiEdit
 calls mark a file as "modified", so the *next* Read of that file is
 allowed (legitimate post-edit re-read).
 
+A Read is a *range*: `offset`/`limit` name the lines it asks for, no
+offset and no limit means the whole file, and `pages` names a PDF page
+range. The guard records the ranges read per file and blocks only a Read
+whose range lies entirely inside what was already read (adjacent ranges
+merge). Reading the first 200 lines and then `offset=200` for the rest
+is two different reads and both run; asking for lines 1–100 again is the
+redundant re-read. (agentic_patterns issue #12, 2026-11-06: keying on the
+path alone blocked the second half of every large file.)
+
 State is per-session JSON at:
 
     $H2_STATE_DIR/<session_id>.json
@@ -161,6 +170,56 @@ def _executed_read_in_session(transcript_path: str | None, file_path: str) -> bo
         return False
 
 
+def _requested_range(tool_input: dict) -> tuple[int, int | None]:
+    """The line range a Read asks for, as (start, end) inclusive; end None = to EOF.
+
+    No offset and no limit is the whole file. A non-numeric or non-positive
+    value falls back to the open-ended reading, which can only *allow* more.
+    """
+    offset, limit = tool_input.get("offset"), tool_input.get("limit")
+    if offset is None and limit is None:
+        return 1, None
+    try:
+        start = max(int(offset), 1) if offset is not None else 1
+    except (TypeError, ValueError):
+        start = 1
+    try:
+        count = int(limit) if limit is not None else 0
+    except (TypeError, ValueError):
+        count = 0
+    return (start, start + count - 1) if count > 0 else (start, None)
+
+
+def _covered(ranges: list, want: tuple[int, int | None]) -> bool:
+    """True iff every line of ``want`` lies inside the union of ``ranges``.
+
+    ``ranges`` is a list of [start, end] pairs with end None for "to EOF";
+    touching or overlapping pairs merge first, so [1,200] + [201,None]
+    covers the whole file.
+    """
+    spans = sorted(((int(a), b) for a, b in ranges), key=lambda r: r[0])
+    merged: list[list] = []
+    for a, b in spans:
+        if merged and (merged[-1][1] is None or a <= merged[-1][1] + 1):
+            if merged[-1][1] is not None:
+                merged[-1][1] = None if b is None else max(merged[-1][1], b)
+        else:
+            merged.append([a, b])
+    s, e = want
+    return any(a <= s and (b is None or (e is not None and e <= b)) for a, b in merged)
+
+
+def _fresh_entry(reads: int, mtime_ns: int | None, want: tuple, pages) -> dict:
+    """A state entry for a file as of a read that is allowed to proceed."""
+    return {
+        "reads": reads,
+        "modified_since_read": False,
+        "read_mtime_ns": mtime_ns,
+        "ranges": [] if pages is not None else [list(want)],
+        "pages": [str(pages)] if pages is not None else [],
+    }
+
+
 def decide(payload: dict) -> tuple[int, str]:
     """Pure decision function.
 
@@ -177,6 +236,8 @@ def decide(payload: dict) -> tuple[int, str]:
     state = load_state(session_id)
     files = state.setdefault("files", {})
     entry = files.get(file_path)
+    want = _requested_range(tool_input)
+    pages = tool_input.get("pages")  # a PDF page range, its own axis
 
     if tool_name == "Read":
         if entry is not None and not entry.get("modified_since_read", False):
@@ -191,11 +252,22 @@ def decide(payload: dict) -> tuple[int, str]:
             cur_mtime = _mtime_ns(file_path)
             prev_mtime = entry.get("read_mtime_ns")
             if cur_mtime is not None and prev_mtime is not None and cur_mtime > prev_mtime:
-                files[file_path] = {
-                    "reads": entry.get("reads", 0) + 1,
-                    "modified_since_read": False,
-                    "read_mtime_ns": cur_mtime,
-                }
+                files[file_path] = _fresh_entry(entry.get("reads", 0) + 1, cur_mtime, want, pages)
+                save_state(session_id, state)
+                return 0, ""
+            # Ranged read (issue #12): a range not yet covered is new content,
+            # not a re-read. An entry from before ranges were tracked counts
+            # as a whole-file read.
+            if pages is not None:
+                already = str(pages) in (entry.get("pages") or [])
+            else:
+                already = _covered(entry.get("ranges") or [[1, None]], want)
+            if not already:
+                if pages is not None:
+                    entry.setdefault("pages", []).append(str(pages))
+                else:
+                    entry.setdefault("ranges", [[1, None]] if "ranges" not in entry else []).append(list(want))
+                entry["reads"] = entry.get("reads", 0) + 1
                 save_state(session_id, state)
                 return 0, ""
             # Carryover guard: the state entry says "already read", but state is
@@ -205,19 +277,23 @@ def decide(payload: dict) -> tuple[int, str]:
             # otherwise reseed from the current read and allow (the
             # SPURIOUS_NO_PRIOR false-positive fix — see audit 2026-06-11).
             if not _executed_read_in_session(payload.get("transcript_path"), file_path):
-                files[file_path] = {
-                    "reads": 1,
-                    "modified_since_read": False,
-                    "read_mtime_ns": cur_mtime,
-                }
+                files[file_path] = _fresh_entry(1, cur_mtime, want, pages)
                 save_state(session_id, state)
                 return 0, ""
             # Redundant re-read of an unmodified file → block.
+            if pages is not None:
+                asked = f"pages {pages}"
+            elif want == (1, None):
+                asked = "the whole file"
+            else:
+                asked = f"lines {want[0]}–{want[1] if want[1] is not None else 'end'}"
             msg = (
                 f"[h2-re-read-guard] BLOCKED: '{file_path}' was already read "
-                f"earlier in this session and has not been modified by "
-                f"Edit/Write/MultiEdit since. The prior content is still in "
-                f"your context — refer to it instead of re-reading.\n"
+                f"earlier in this session ({asked} is inside what you have "
+                f"read) and has not been modified by Edit/Write/MultiEdit "
+                f"since. The prior content is still in your context — refer "
+                f"to it instead of re-reading. A Read with an offset/limit "
+                f"outside the lines already read is allowed.\n"
                 f"\n"
                 f"(An external edit that bumped the file's mtime is detected "
                 f"automatically and would not be blocked — so its content "
@@ -230,11 +306,7 @@ def decide(payload: dict) -> tuple[int, str]:
         # First read OR re-read after an intervening modification. Record the
         # mtime of the version being read so a later external edit is detectable.
         prev_reads = entry.get("reads", 0) if entry else 0
-        files[file_path] = {
-            "reads": prev_reads + 1,
-            "modified_since_read": False,
-            "read_mtime_ns": _mtime_ns(file_path),
-        }
+        files[file_path] = _fresh_entry(prev_reads + 1, _mtime_ns(file_path), want, pages)
         save_state(session_id, state)
         return 0, ""
 

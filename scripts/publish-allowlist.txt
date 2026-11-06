@@ -92,3 +92,6 @@ modules/no-live-external-in-tests
 modules/stay-in-project-tree
 modules/no-sudo-as-shortcut
 modules/no-cat-head-via-bash
+
+# Line endings pinned for scripts, hooks and config (roadmap/16 unit 4, 2026-11-06)
+.gitattributes
